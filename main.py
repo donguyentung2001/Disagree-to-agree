@@ -5,4 +5,8 @@ app = Flask(__name__)
 def homepage():
     return 'Homepage'
 
+@app.route('/register', methods = ["GET", "POST"])
+def register():
+    return "Register"
+
 app.run()
