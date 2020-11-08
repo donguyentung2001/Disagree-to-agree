@@ -1,4 +1,11 @@
 from flask import Flask
+import pyrebase
+from database.firebase_config import firebase_config
+
+firebase = pyrebase.initialize_app(firebase_config)
+
+db = firebase.database()
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -7,6 +14,7 @@ def homepage():
 
 @app.route('/register', methods = ["GET", "POST"])
 def register():
-    return "Register"
+    return "Registration"
 
-app.run()
+if __name__ == "__main__":
+    app.run()
