@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<form action="/register" method = post>
+  <div class="container">
+    <h1>Register</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr>
+
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+    <br><br>
+
+    <label for="password"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+    <br><br>
+    
+    <label for="party"><b>Do you identify as:</b></label>
+    <select name="cars" id="cars">
+          <option value="republican"> Republican </option>
+          <option value="democrates"> Democrats </option>
+          <option value="other"> Other </option>
+    </select>
+    <br> <br>
+    <label for="interest"> <b> Choose your interest: </b> </label> <br>
+        <input type="checkbox" name="interest[][1]" id="Immigration" value="Immigration" /><label for="immigration"> Immigration </label><br/>
+        <input type="checkbox" name="interest[][2]" id="Economics" value="Economics"  /><label for="Economics"> Economics </label><br/>
+        <input type="checkbox" name="interest[][3]" id="Relationship" value="Relationship" /><label for="Relationship"> Relationships </label><br/>
+        <input type="checkbox" name="interest[][4]" id="Test1" value="Test1" /><label for="Test1"> Test1 </label><br/>
+        <input type="checkbox" name="interest[][5]" id="Test2" value="Test2" /><label for="Test2"> Test2 </label><br/>
+
+    <button type="submit" class="registerbtn">Register</button>
+  </div>
+</form>
+  <div class="container signin">
+    <p>Already have an account? <a href="#">Sign in</a>.</p>
+  </div>
+
+</body>
+</html>
