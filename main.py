@@ -46,6 +46,7 @@ def handle_message(msg):
 @app.route('/register', methods = ["GET", "POST"])
 def register():
     if request.method == "POST":
+        _username = request.form["username"]
         _email = request.form["email"]
         _password = request.form["password"]
         _party = request.form["party"]
@@ -57,8 +58,8 @@ def register():
             _hashed_password = generate_password_hash(_password)
         user = users_ref.order_by_child('email').equal_to(_email).get()
         if len(user) >= 1:
-            return "USER EXISTED!!"
-        users_ref.push({"email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
+            return render_template("register.html", message = "This user already existed. Please enter a different email.")
+        users_ref.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
         return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")
@@ -74,7 +75,8 @@ def signin():
         else:
             for _, user in user:
                 if check_password_hash(user["password"], _password):
-                    return render_template("complete.html")
+                    session["user"] = user["username"]
+                    return render_template("complete.html", user = session["user"])
                 else:
                     return render_template("signin.html", message = "Wrong password")
             else:
