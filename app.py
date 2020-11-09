@@ -51,20 +51,30 @@ def handle_message(msg):
 @app.route('/register', methods = ["GET", "POST"])
 def register():
     if request.method == "POST":
+        print(request.form)
         _username = request.form["username"]
         _email = request.form["email"]
         _password = request.form["password"]
         _party = request.form["party"]
+        _avatar = request.form["avatar"]
         _interest = []
+        _message = []
         for key in request.form.keys():
             if key[0:8] == "interest":
                 _interest.append(request.form[key])
+            elif key[0:7] == "message":
+                _message.append(request.form[key])
+
         if _password:
             _hashed_password = generate_password_hash(_password)
-        user = users_db.order_by_child('email').equal_to(_email).get()
+        user = users_db.order_by_child('email').equal_to(_email).get().items()
         if len(user) >= 1:
-            return render_template("register.html", message = "This user already existed. Please enter a different email.")
-        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
+            return render_template("register.html", message = "This user email already existed. Please enter a different email.")
+        user = users_db.order_by_child('username').equal_to(_username).get().items()
+        if len(user) >= 1:
+            return render_template("register.html", message = "This username already existed. Please enter a different username.")        
+
+        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "avatar": _avatar})
         return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")
