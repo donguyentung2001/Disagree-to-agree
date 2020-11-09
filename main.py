@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session
 from werkzeug.security import generate_password_hash, check_password_hash
 import pyrebase
 from flask_socketio import SocketIO, send
@@ -16,7 +16,7 @@ socketio=SocketIO(app)
 def homepage():
     return render_template('home.html')
 
-@app.route('/chat',methods = ["GET", "POST"])
+@app.route('/chat')
 def chat(): 
     return render_template("chat.html")
 @socketio.on('message')
