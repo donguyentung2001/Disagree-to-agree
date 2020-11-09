@@ -7,6 +7,7 @@ from flask_socketio import SocketIO, send
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import datetime
 
 cred = credentials.Certificate("database/firebase_key.json")
 
@@ -17,6 +18,10 @@ firebase_admin.initialize_app(cred, {
 db = db.reference('')
 users_db = db.child('users')
 chat_db = db.child('chat')
+
+#test chat_db. will need to specify chat_ID based on each pair of users later.
+chat_db.push({"chat":""})
+chat_ref = chat_db.child('chat_ID').child('chat') 
 
 # utilities
 import json
@@ -39,10 +44,20 @@ def homepage():
         return render_template('home.html', flash=data)
 
 @app.route('/chat', methods = ["GET", "POST"])
-def chat(): 
+def chat():
     if request.method == "POST":
-        session['data']='You are unmatched'
-    return render_template("chat.html")
+            if request.json['data']: 
+                session['data']='You are unmatched'
+            else: 
+                time=datetime.datetime.now()
+                chat_ref.set({
+                    time: content, 
+                })
+    return render_template("chat.html",user=session['user'])
+
+@app.route('/chat/log', methods = ["GET", "POST"])
+def chat_log(): 
+    chat_ref = chat_db.child('chat') 
 @socketio.on('message')
 def handle_message(msg): 
     send(msg,broadcast=True)

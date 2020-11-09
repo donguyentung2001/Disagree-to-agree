@@ -7,7 +7,7 @@
     <body> 
         <script type="text/javascript"> 
             $(document).ready(function() {
-
+                var username = '{{ user }}'
                 var socket = io.connect('http://127.0.0.1:5000');
 
                 socket.on('message', function(msg) {
@@ -15,30 +15,51 @@
                         $.ajax({
                             type : "POST",
                             url : "http://127.0.0.1:5000/chat",
-                            data: {data: "Unmatched"},
+                            data: {'data': "Unmatched"},
                             contentType: 'application/json;charset=UTF-8',
                             success: function() {
                                 window.location.href = '/'
                             }
                         });
                     }
-                    else { 
-                        if (/\S/.test(msg)) { 
-                    $("#message-display").append('<div>'+ "person: " + msg+'</div>');
-                        }
-                    }
-                });
+                }
+                );
 
                 $('#sendbutt').on('click', function() {
+                    var message = $('#message-input').val()
                     socket.send($('#message-input').val());
                     $('#message-input').val('');
+                    $.ajax({
+                            type : "POST",
+                            url : "http://127.0.0.1:5000/chat",
+                            data: {'user':username, 
+                            'msg': message, 
+                            },
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function() {
+                                console.log("Success")
+                            }
+                        });
                 });
 
                 });
+
+                setInterval(function()
+                    { $.ajax({
+                    url: 'chat/log',
+                    type: 'GET', 
+                    success: function(data) { 
+                        $('#message-display')
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("something went wrong")
+                    }
+                    }); 
+                }, 1000);
         </script>
         <div> Welcome to the chat room. You are chatting with a user. </div>
         <div> Type "!exit" if you want to stop chatting and return to the homepage. </div>
-        <l id="message-display"> </l>
+        <div id="message-display"> </div>
         <input type="text" id="message-input"> 
         <button id="sendbutt"> Send </button>
     </body>
