@@ -20,11 +20,11 @@ conda install --file requirements.txt
 ### Step 3: Run
 
 ```
-python main.py
+python app.py
 ```
 
 OR (recommended):
 
 ```
-export FLASK_ENV=development & export FLASK_APP=main.py && flask run
+flask run
 ```
