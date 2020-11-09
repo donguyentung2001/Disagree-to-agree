@@ -27,12 +27,15 @@ socketio=SocketIO(app)
 
 @app.route('/', methods = ["GET", "POST"])
 def homepage():
-    if "data" in session:
-        data= session['data']
+    if session.get("user"):
+        return render_template('signedHome.html', user = session["user"])
     else:
-        data = ""
-    session['data'] = ''
-    return render_template('home.html', flash=data)
+        if "data" in session:
+            data= session['data']
+        else:
+            data = ""
+        session['data'] = ''
+        return render_template('home.html', flash=data)
 
 @app.route('/chat', methods = ["GET", "POST"])
 def chat(): 
@@ -76,6 +79,7 @@ def signin():
             for _, user in user:
                 if check_password_hash(user["password"], _password):
                     session["user"] = user["username"]
+                    session["user_email"] = user["email"]
                     return render_template("complete.html", user = session["user"])
                 else:
                     return render_template("signin.html", message = "Wrong password")
@@ -84,6 +88,13 @@ def signin():
             
     else:
         return render_template("signin.html")
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    if 'credentials' in session:
+        del session['credentials']
+    return redirect('/')
 
 if __name__ == "__main__":
     socketio.run(app)
