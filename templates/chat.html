@@ -12,10 +12,20 @@
 
                 socket.on('message', function(msg) {
                     if (msg=="!exit") { 
-                        window.location.href = '/'
+                        $.ajax({
+                            type : "POST",
+                            url : "http://127.0.0.1:5000/chat",
+                            data: {data: "Unmatched"},
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function() {
+                                window.location.href = '/'
+                            }
+                        });
                     }
                     else { 
+                        if (/\S/.test(msg)) { 
                     $("#message-display").append('<div>'+ "person: " + msg+'</div>');
+                        }
                     }
                 });
 
