@@ -6,6 +6,8 @@
 <body>
 
 <form action="/signin" method = post>
+
+  {{ message }}
   <div class="container">
     <h1>Sign in</h1>
     <p>Please fill in this form to sign in</p>
@@ -21,6 +23,9 @@
 
     <button type="submit" class="signinbtn"> Sign In </button>
   </div>
+
+  <p> No account?  <a href="/register">Register</a></p>
+
 </form>
 </body>
 </html>

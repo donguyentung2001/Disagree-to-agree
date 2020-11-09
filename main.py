@@ -56,10 +56,10 @@ def register():
         if _password:
             _hashed_password = generate_password_hash(_password)
         user = users_ref.order_by_child('email').equal_to(_email).get()
-        if "email" in user:
-            return "Email already exist!"
+        if len(user) >= 1:
+            return "USER EXISTED!!"
         users_ref.push({"email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
-        return "Your registration is completed!"
+        return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")
 
@@ -74,11 +74,11 @@ def signin():
         else:
             for _, user in user:
                 if check_password_hash(user["password"], _password):
-                    return "Sign in approved"
+                    return render_template("complete.html")
                 else:
-                    return "Wrong password"
+                    return render_template("signin.html", message = "Wrong password")
             else:
-                return "Email doesn't exist"
+                return render_template("signin.html", message = "Email doesn't exist")
             
     else:
         return render_template("signin.html")
