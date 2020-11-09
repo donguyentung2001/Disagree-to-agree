@@ -11,7 +11,12 @@
                 var socket = io.connect('http://127.0.0.1:5000');
 
                 socket.on('message', function(msg) {
+                    if (msg=="!exit") { 
+                        window.location.href = '/'
+                    }
+                    else { 
                     $("#message-display").append('<div>'+ "person: " + msg+'</div>');
+                    }
                 });
 
                 $('#sendbutt').on('click', function() {
@@ -22,6 +27,7 @@
                 });
         </script>
         <div> Welcome to the chat room. You are chatting with a user. </div>
+        <div> Type "!exit" if you want to stop chatting and return to the homepage. </div>
         <l id="message-display"> </l>
         <input type="text" id="message-input"> 
         <button id="sendbutt"> Send </button>
