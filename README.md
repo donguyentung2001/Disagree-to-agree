@@ -26,5 +26,5 @@ python main.py
 OR (recommended):
 
 ```
-export FLASK_ENV=development & export FLASK_APP=main.py && flask run
+export FLASK_ENV=development & export FLASK_APP=main.py & export FLASK_DEBUG=True && flask run
 ```
