@@ -44,24 +44,23 @@ def homepage():
 @app.route('/chat', methods = ["GET", "POST"])
 def chat():
     if request.method == "POST":
-            if request.json['data']: 
-                session['data']='You are unmatched'
-            else: 
-                time=datetime.datetime.now()
-                username=request.json['username']
-                msg=request.json['msg']
-                chat_db.push({'time':time,'username': username,'message': msg})
-    return render_template("chat.html",user=session['user'])
-
+        if "data" in request.json:
+            session['data']='You are unmatched'
+        else: 
+            time=datetime.datetime.now().timestamp() * 1000
+            username= session["user"]
+            msg=request.json['msg']
+            chat_db.push({'time':time,'username': username,'message': msg})
+            return "works"
+    else:
+        return render_template("chat.html",user=session['user'])
 @socketio.on('message')
 def handle_message(msg): 
     send(msg,broadcast=True)
-    chat_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
 
 @app.route('/register', methods = ["GET", "POST"])
 def register():
     if request.method == "POST":
-        print(request.form)
         _username = request.form["username"]
         _email = request.form["email"]
         _password = request.form["password"]
