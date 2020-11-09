@@ -16,6 +16,7 @@ firebase_admin.initialize_app(cred, {
 
 ref = db.reference('')
 users_ref = ref.child('users')
+chat_ref = ref.child('chat')
 
 # utilities
 import json
