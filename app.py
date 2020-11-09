@@ -20,7 +20,6 @@ users_db = db.child('users')
 chat_db = db.child('chat')
 
 #test chat_db. will need to specify chat_ID based on each pair of users later.
-chat_ID = chat_db.child('chat')
 
 # utilities
 import json
@@ -33,7 +32,7 @@ socketio=SocketIO(app)
 @app.route('/', methods = ["GET", "POST"])
 def homepage():
     if session.get("user"):
-        return render_template('signedHome.html', user = session["user"])
+        return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"])
     else:
         if "data" in session:
             data= session['data']
@@ -51,7 +50,7 @@ def chat():
                 time=datetime.datetime.now()
                 username=request.json['username']
                 msg=request.json['msg']
-                
+                chat_db.push({'time':time,'username': username,'message': msg})
     return render_template("chat.html",user=session['user'])
 
 @app.route('/chat/log', methods = ["GET", "POST"])
@@ -106,6 +105,7 @@ def signin():
                 if check_password_hash(user["password"], _password):
                     session["user"] = user["username"]
                     session["user_email"] = user["email"]
+                    session["user_avatar"] = user["avatar"]
                     return render_template("complete.html", user = session["user"])
                 else:
                     return render_template("signin.html", message = "Wrong password")
