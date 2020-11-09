@@ -14,8 +14,11 @@ socketio=SocketIO(app)
 
 @app.route('/', methods = ["GET", "POST"])
 def homepage():
-    data=session['data']
-    session['data']=''
+    if session["data"]:
+        data= session['data']
+    else:
+        data = ""
+    session['data'] = ''
     return render_template('home.html', flash=data)
 
 @app.route('/chat', methods = ["GET", "POST"])
@@ -43,6 +46,14 @@ def register():
         return "Your registration is completed!"
     else:
         return render_template("register.html")
+
+@app.route('/signin', methods = ["GET", "POST"])
+def signin():
+    if request.method == "POST":
+        return "You are signed in!"
+    else:
+        return render_template("signin.html")
+
 
 if __name__ == "__main__":
     app.secret_key = '123456789'
