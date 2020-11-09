@@ -14,9 +14,9 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://disagree-to-agree.firebaseio.com'
 })
 
-ref = db.reference('')
-users_ref = ref.child('users')
-chat_ref = ref.child('chat')
+db = db.reference('')
+users_db = db.child('users')
+chat_db = db.child('chat')
 
 # utilities
 import json
@@ -46,6 +46,7 @@ def chat():
 @socketio.on('message')
 def handle_message(msg): 
     send(msg,broadcast=True)
+    chat_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
 
 @app.route('/register', methods = ["GET", "POST"])
 def register():
@@ -60,10 +61,10 @@ def register():
                 _interest.append(request.form[key])
         if _password:
             _hashed_password = generate_password_hash(_password)
-        user = users_ref.order_by_child('email').equal_to(_email).get()
+        user = users_db.order_by_child('email').equal_to(_email).get()
         if len(user) >= 1:
             return render_template("register.html", message = "This user already existed. Please enter a different email.")
-        users_ref.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
+        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
         return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")
@@ -73,7 +74,7 @@ def signin():
     if request.method == "POST":
         _email = request.form["email"]
         _password = request.form["password"]
-        user = users_ref.order_by_child('email').equal_to(_email).get().items()
+        user = users_db.order_by_child('email').equal_to(_email).get().items()
         if len(user) > 1:
             return "Internal Database Error (more than one user detected)"
         else:
