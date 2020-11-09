@@ -55,6 +55,9 @@ def register():
                 _interest.append(request.form[key])
         if _password:
             _hashed_password = generate_password_hash(_password)
+        user = users_ref.order_by_child('email').equal_to(_email).get()
+        if "email" in user:
+            return "Email already exist!"
         users_ref.push({"email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
         return "Your registration is completed!"
     else:
@@ -65,11 +68,20 @@ def signin():
     if request.method == "POST":
         _email = request.form["email"]
         _password = request.form["password"]
-        user = users_ref.order_by_child('email').equal_to(_email).get()
-        return str(user)
+        user = users_ref.order_by_child('email').equal_to(_email).get().items()
+        if len(user) > 1:
+            return "Internal Database Error (more than one user detected)"
+        else:
+            for _, user in user:
+                if check_password_hash(user["password"], _password):
+                    return "Sign in approved"
+                else:
+                    return "Wrong password"
+            else:
+                return "Email doesn't exist"
+            
     else:
         return render_template("signin.html")
-
 
 if __name__ == "__main__":
     socketio.run(app)
