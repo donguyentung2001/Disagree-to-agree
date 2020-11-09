@@ -53,9 +53,6 @@ def chat():
                 chat_db.push({'time':time,'username': username,'message': msg})
     return render_template("chat.html",user=session['user'])
 
-@app.route('/chat/log', methods = ["GET", "POST"])
-def chat_log(): 
-    chat_ref = chat_db.child('chat') 
 @socketio.on('message')
 def handle_message(msg): 
     send(msg,broadcast=True)

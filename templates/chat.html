@@ -44,18 +44,6 @@
 
                 });
 
-                setInterval(function()
-                    { $.ajax({
-                    url: 'chat/log',
-                    type: 'GET', 
-                    success: function(data) { 
-                        console.log("write later. just testing")
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        alert("something went wrong")
-                    }
-                    }); 
-                }, 1000);
         </script>
         <div> Welcome to the chat room. You are chatting with a user. </div>
         <div> Type "!exit" if you want to stop chatting and return to the homepage. </div>
