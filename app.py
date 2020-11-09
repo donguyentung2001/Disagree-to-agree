@@ -56,7 +56,6 @@ def chat():
 @socketio.on('message')
 def handle_message(msg): 
     send(msg,broadcast=True)
-    chat_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest})
 
 @app.route('/register', methods = ["GET", "POST"])
 def register():
