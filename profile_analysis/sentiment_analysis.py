@@ -4,7 +4,6 @@ from textblob import TextBlob
 from time import sleep
 import os
 from preprocess import preprocess, get_useful_words
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 def analyze_google_sentiment(text_content):
     """
@@ -13,6 +12,7 @@ def analyze_google_sentiment(text_content):
     Args:
       text_content The text content to analyze
     """
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.getcwd(), 'yhack-55a358192c91.json')
 
     client = language_v1.LanguageServiceClient()
 
@@ -41,17 +41,14 @@ def find_sentiments(cleaned_keywords):
     :return: polarity value [-1, 1] and subjectivity value [0, 1]
     '''
 
-    analyzer = SentimentIntensityAnalyzer()
     blob = TextBlob(str(cleaned_keywords))
     polarity, subjectivity = blob.sentiment
-    if polarity == 0:
-        vader_op = analyzer.polarity_scores(cleaned_keywords)
-        polarity = vader_op['compound']
+    
     return subjectivity
 
 if __name__ == "__main__":
-    text = "I am so happy and joyful."
-    print(analyze_google_sentiment("I am so happy and joyful."))
+    text = ""
+    print(analyze_google_sentiment(""))
     # cleaned_text = preprocess(text)
     # keywords = get_useful_words(cleaned_text)
     # print(cleaned_text)
