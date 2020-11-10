@@ -15,6 +15,8 @@ import json
 from flask.json import jsonify
 import random
 import time
+from profile_analysis import sentiment_analysis
+from matching import matching_algo
 
 #app setup
 app = Flask(__name__)
@@ -55,29 +57,32 @@ def matchmaking():
         for username in list(avail_user):
             if str(session["user"]) == str(username):
                 waiting_already = True
+                # TODO should we disable the match button so that they cannot click again?
     if avail_user != None and not waiting_already:
         avail_user = avail_user.items()
-        compatible_user = list(avail_user)[0]
-        chatID = session["user"] + compatible_user[0]
-        session["chatID"] = chatID
-        match_db.child(compatible_user[0]).update(
-            {"matched": chatID}
-        )
+        compatible_user = matching_algo.match_users([session["user"], users_db.child(session["user"])], list(avail_user))
+        # compatible user is the id for the other user
+        if compatible_user is not None:
+            chatID = session["user"] + compatible_user
+            session["chatID"] = chatID
+            match_db.child(compatible_user).update(
+                {"matched": chatID}
+            )
+            return redirect("/chat")
 
-    else:
-        match_db.set({session["user"]: {"matched": False}})
-        matched = False
-        while True:
-            user_match_update = match_db.child(session["user"]).get()
-            if user_match_update["matched"] != False: # matched
-                match_db.child(session["user"]).delete()
-                chatID = user_match_update["matched"]
-                session["chatID"] = chatID
-                matched = True
-            if matched == True:
-                break
-            else:
-                continue
+    match_db.set({session["user"]: {"matched": False}})
+    matched = False
+    while True and not waiting_already:
+        user_match_update = match_db.child(session["user"]).get()
+        if user_match_update["matched"] != False: # matched
+            match_db.child(session["user"]).delete()
+            chatID = user_match_update["matched"]
+            session["chatID"] = chatID
+            matched = True
+        if matched == True:
+            break
+        else:
+            continue
     return redirect("/chat")
 
 @app.route('/chat', methods = ["GET"])
@@ -137,12 +142,16 @@ def register():
         _avatar = request.form["avatar"]
         _interest = []
         _message = []
+        _message-polarity = []
+        _message-subjectivity = []
         for key in request.form.keys():
+            # TODO maybe make it a keyword adding box so they can add as many keywords as they want
             if key[0:8] == "interest":
                 _interest.append(request.form[key])
             elif key[0:7] == "message":
                 _message.append(request.form[key])
-
+                _message-polarity.append(sentiment_analysis.analyze_google_sentiment(request.form[key]))
+                _message-subjectivity.append(sentiment_analysis.find_sentiments(request.form[key]))
         if _password:
             _hashed_password = generate_password_hash(_password)
         user = users_db.order_by_child('email').equal_to(_email).get().items()
@@ -152,7 +161,7 @@ def register():
         if len(user) >= 1:
             return render_template("register.html", message = "This username already existed. Please enter a different username.")        
 
-        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "avatar": _avatar})
+        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "messages-polarity": _message-polarity, "messages-subjectivity": _message-subjectivity, "avatar": _avatar})
         return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")

@@ -47,8 +47,8 @@ def find_sentiments(cleaned_keywords):
     return subjectivity
 
 if __name__ == "__main__":
-    text = "I am so happy and joyful."
-    print(analyze_google_sentiment("I am so happy and joyful."))
+    text = ""
+    print(analyze_google_sentiment(""))
     # cleaned_text = preprocess(text)
     # keywords = get_useful_words(cleaned_text)
     # print(cleaned_text)
