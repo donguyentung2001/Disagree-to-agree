@@ -22,4 +22,4 @@ def match_users(user, avail_users):
         # if len(diff_polarity_scores) < 3 or len(diff_subjectivity_scores) < 2:
         #     continue
         # return avail_user_id
-    return None
+    return avail_users[0][0]
