@@ -47,7 +47,7 @@ def homepage():
     if session.get("user"):
         return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"], flash = unmatch)
     else:
-        return render_template('home.html', flash = unmatch)
+       return render_template('home.html', flash = unmatch)
 
 @app.route('/matchmaking', methods = ["GET", "POST"])
 def matchmaking():
@@ -126,11 +126,11 @@ def redirect_to_chat():
 def chat(chatID):
     chat_ID=chat_db.child(chatID)
     if request.method == "POST":
-        if request.json['msg'] == "!exit": 
-            session['umatch']='You have been unmatched'
+        if request.json['msg'] == "!exit":
+            session['unmatch']='You have been unmatched'
             session.pop('chatID', None)
             chat_db.child(chatID).delete()
-            return redirect("/")
+            return "OK"
         else:
             time=datetime.datetime.now().timestamp() * 1000
             username= session["user"]
