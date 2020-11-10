@@ -52,8 +52,8 @@ def homepage():
 @app.route('/matchmaking', methods = ["GET", "POST"])
 def matchmaking():
     avail_user = match_db.get()
-    print("avail user:", avail_user)
     waiting_already = False
+    print("avail_user", avail_user)
     if avail_user != None:
         for username in list(avail_user):
             if str(session["user"]) == str(username):
@@ -61,7 +61,8 @@ def matchmaking():
                 # TODO should we disable the match button so that they cannot click again?
     if avail_user != None and not waiting_already:
         avail_user = avail_user.items()
-        compatible_user = matching_algo.match_users([session["user"], users_db.child(session["user"])], list(avail_user))
+        compatible_user = matching_algo.match_users([session["user"], users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()], list(avail_user))
+        print('compatible user: ', compatible_user)
         # compatible user is the id for the other user
         if compatible_user is not None:
             chatID = session["user"] + compatible_user
@@ -71,13 +72,13 @@ def matchmaking():
             )
             return redirect("/chat")
     user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
-    print(session['user'], session)
-    print(user_details)
-    return ValueError()
-    match_db.set({session["user"]: {"matched": False, "details": user_details}})
+    for _, details in user_details:
+        user_profile = details
+    match_db.set({session["user"]: {"matched": False, "details": user_profile}})
     matched = False
     while True and not waiting_already:
         user_match_update = match_db.child(session["user"]).get()
+        print("user_match_update: ", session['user'], user_match_update)
         if user_match_update["matched"] != False: # matched
             match_db.child(session["user"]).delete()
             chatID = user_match_update["matched"]
