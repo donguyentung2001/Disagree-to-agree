@@ -2,6 +2,7 @@ def match_users(user, avail_users):
     for _, details in user[1]:
         user_data = details
     user_id = user[0]
+    print(user_data, avail_users)
     user_interests = set(user_data['interest'])
     user_polarity_scores = user_data['messages-polarity']
     user_subjectivity_scores = user_data['messages-subjectivity']
@@ -20,5 +21,5 @@ def match_users(user, avail_users):
         diff_subjectivity_scores = [abs(a-b) for a, b in zip(avail_user_subjectivity_scores, user_subjectivity_scores)]
         # if len(diff_polarity_scores) < 3 or len(diff_subjectivity_scores) < 2:
         #     continue
-        return avail_user_id
+        # return avail_user_id
     return None

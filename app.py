@@ -71,23 +71,47 @@ def matchmaking():
                 {"matched": chatID}
             )
             return redirect("/chat")
-    user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
-    for _, details in user_details:
-        user_profile = details
-    match_db.set({session["user"]: {"matched": False, "details": user_profile}})
-    matched = False
-    while True and not waiting_already:
-        user_match_update = match_db.child(session["user"]).get()
-        print("user_match_update: ", session['user'], user_match_update)
-        if user_match_update["matched"] != False: # matched
-            match_db.child(session["user"]).delete()
-            chatID = user_match_update["matched"]
-            session["chatID"] = chatID
-            matched = True
-        if matched == True:
-            break
         else:
-            continue
+            user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
+            for _, details in user_details:
+                user_profile = details
+            match_db.set({session["user"]: {"matched": False, "details": user_profile}})
+            matched = False
+            while True and not waiting_already:
+                user_match_update = match_db.child(session["user"]).get()
+                print("user_match_update: ", session['user'], user_match_update, session["user"] + "ishere")
+                if user_match_update["matched"] != False: # matched
+                    print('breached1')
+                    match_db.child(session["user"]).delete()
+                    chatID = user_match_update["matched"]
+                    session["chatID"] = chatID
+                    matched = True
+                print("session chatid: ", session)
+                if matched == True:
+                    break
+                else:
+                    continue
+    else:
+        user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
+        for _, details in user_details:
+            user_profile = details
+        match_db.set({session["user"]: {"matched": False, "details": user_profile}})
+        matched = False
+        while True:
+            user_match_update = match_db.child(session["user"]).get()
+            print("user_match_update: ", session['user'], user_match_update)
+            if user_match_update["matched"] != False: # matched
+                print('breached2')
+                match_db.child(session["user"]).delete()
+                chatID = user_match_update["matched"]
+                session["chatID"] = chatID
+                matched = True
+            print("session chatid: ", session)
+            if matched == True:
+                break
+            else:
+                continue
+
     return redirect("/chat")
 
 @app.route('/chat', methods = ["GET"])
