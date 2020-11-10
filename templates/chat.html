@@ -29,7 +29,10 @@
                     type: 'GET', 
                     success: function(data) { 
                         var spaced_data = data.replace(/\n/g, '<br/>');
-                        $('#message-display').append(spaced_data)
+                        $('#message-display').append(spaced_data);
+                        $('#message-input').toggle();
+                        $('#sendbutt').toggle(); 
+                        $('#loading').toggle();
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         alert("something went wrong")
@@ -41,6 +44,7 @@
                     socket.send(username + ": " + $('#message-input').val());
                     $('#message-input').val('');
                     if (/\S/.test(message)) {
+                    
                     $.ajax({
                             type : "POST",
                             url : "http://127.0.0.1:5000/chat",
@@ -58,8 +62,9 @@
         </script>
         <div> Welcome to the chat room. You are chatting with a user. </div>
         <div> Type "!exit" if you want to stop chatting and return to the homepage. </div>
+        <div id="loading"> Loading... </div>
         <div id="message-display"> </div>
-        <input type="text" id="message-input"> 
-        <button id="sendbutt"> Send </button>
+        <input type="text" id="message-input" hidden> 
+        <button id="sendbutt" hidden> Send </button>
     </body>
 </html> 
