@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "yhack-295013",
+  "private_key_id": "55a358192c91ed95025f676567fe738ad7e30761",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC3mRpN7oDZ2Ddl\nzx0X//As9XVikGUAexC0vi/5sx4beHZesGPFxWRAZxOgvGgCbmyodJUTJnTayERN\nflYr5bH90k2FYqtFO2j4curQuNoUiHkh1Vp0I5pRuAiY2gMQI3qKuZmtzhnWVKZY\n02/xL1LYf80iRVF+cbmLpfhPPEiQk7JW52cneaEZdKjePugd/i4BAWWZlHMDBZOU\noqHhderEsQUF2kAOY+uxTFuSzyvF81+eQZL5DVDiNMnJDok0CW+HX7PNHJMe2m2j\n/LRi4zCNxpOn7FodRiOXFJ8+f501j71VuVfbsrJXR3F93dz18OjmINhlyJtn0INc\n3qguZN1HAgMBAAECggEASgAEsSqTdrqGQZvEHztCY+yfXpXSj+oKZr9NePhwByR7\nmVjBLiKMcMTbDWtDBM/bLd6ng2t5qAEWPqHQO6s+HY8ZPczyOVpjydgPuwb2p1YG\ndNOYvLzo400o8erVVzjlmGqMfZhXo6LE1YKLWQv4+Vgxp0GHQk62OYow1kb2/IZM\nkNn3N14OGreahgqVsHdJke1y1D9KFLMQjjnpQaCh6yVdeZ7Q45jXdCSVyVvsJHn1\nKNgivIjVbPtEpGiWsl1KITwLREPdqK5W0YdCmxSU2NC3jdOtmSmBV+Apk/TCAYb1\nUkxtzIcu79ZhSKf6PODPZ+qFkcWzDZcHtqdiyqqo4QKBgQDbmbRkukIfrEG6q7b+\nItkjWBgOejk0qdY/VQBH8CJeXBsNXtQUbkNT1UO2LpAv9yD8LrWB260mn70WM/IJ\njdUiJIBLjL7J6GnOqzYoiHAFlUElMopY+FtfYCeGC7k1PmpSVcBX4CC7BQCBIfOm\npY9QgVNeasBt595CjqHDC53CsQKBgQDWB7Y2O+Ty+VSlDLa58xxWnpINOmAErLHe\n4dN0C9fhTtK6ErGFLiiHr0JDMr6u5IAraUsUeJ/71t3BmXXmv1qRr8NYeIH5gnW0\nQ+Sx9PRHOizn9INgtB37H2jnCL/k0VmMwLWOXEMXq9orobXUsXrC4j/omJpTogVL\nPxMZ5UptdwKBgDGaB0AVPihPTU1vydafYnJ0TILAork9f3Iwre6R1AGCRm3/tGGl\nAjomWrQE0nazGFU966uYRgUKYbhpJUt5KOIcYoouEU4j2/pde88t+jeYne1b/Bna\nhzEE1AiYD05yeat9SQPQUTRNDe8dDx7eGH/zpjQWYr6wd+iKtQkMT6cRAoGBAK1P\nGVDZNw84rj3oCZ6RKYVKaeGkP1QJsw5TtrHlVS3wcdqSgITjV5ZnaDSZxqZACTkd\nzdoJwyJeXrsB1OLAWEpYFMpy6mxsI3uQ7oLbY2K5zNsWt7t6njxWts892oUisGy1\nL07TjtCAK+3gyCgufsWIB1AFIhJOxBKmRIVXkekJAoGBAKpFb7RqlDj34qwVPQcr\nx8BwqM7jcScpcdh6GPHdW1EgBYQurb0FdluEQVQNj8c1SjTbyHfcU37GlUwuIw/9\nOZsn5iiiId7sBzIR3/JaQeoIM+fZn3IofdlYNp9m3NIspj9yrgaU0Z8vqLe39Ccg\npn9WrcSwBTLzf3h5y1d/rCIx\n-----END PRIVATE KEY-----\n",
+  "client_email": "yhack-825@yhack-295013.iam.gserviceaccount.com",
+  "client_id": "102783687470791326788",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/yhack-825%40yhack-295013.iam.gserviceaccount.com"
+}
