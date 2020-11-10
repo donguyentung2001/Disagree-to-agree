@@ -1,5 +1,6 @@
 # web framework
 from flask import Flask, render_template, request, session, redirect, url_for
+from flask.wrappers import Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import SocketIO, send
 
@@ -23,6 +24,7 @@ chat_db = db.child('chat')
 
 # utilities
 import json
+from flask.json import jsonify
 
 app = Flask(__name__)
 app.secret_key = 'development key'
@@ -31,14 +33,14 @@ socketio=SocketIO(app)
 
 @app.route('/', methods = ["GET", "POST"])
 def homepage():
-    if session.get("user"):
-        return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"])
+    if "data" in session:
+        data= session['data']
     else:
-        if "data" in session:
-            data= session['data']
-        else:
-            data = ""
-        session['data'] = ''
+        data = ""
+    session['data'] = ''
+    if session.get("user"):
+        return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"], flash=data)
+    else:
         return render_template('home.html', flash=data)
 
 @app.route('/chat', methods = ["GET", "POST"])
@@ -47,11 +49,14 @@ def chat():
     if request.method == "POST":
         if request.json['msg'] == "!exit": 
             session['data']='You are unmatched'
+            chat_db.child('chatID').delete() 
+            return "OK"
         else:
             time=datetime.datetime.now().timestamp() * 1000
             username= session["user"]
             msg=request.json['msg']
             chat_ID.push({'time':time,'username': username,'message': msg})
+            return "OK"
     else:
         return render_template("chat.html",user=session['user'])
 
@@ -59,7 +64,16 @@ def chat():
 def chat_log(): 
     chat_ID=chat_db.child('chatID')
     message="" 
-    
+    messages_content=chat_ID.get()
+    if messages_content != None:
+        for message_content in messages_content: 
+            message_content=chat_ID.child(message_content)
+            message+= message_content.child("username").get()
+            message+= ": "
+            message+= message_content.child("message").get()
+            message+= "\n" 
+    return message
+
 @socketio.on('message')
 def handle_message(msg): 
     send(msg,broadcast=True)
@@ -113,7 +127,6 @@ def signin():
                     return render_template("signin.html", message = "Wrong password")
             else:
                 return render_template("signin.html", message = "Email doesn't exist")
-            
     else:
         return render_template("signin.html")
 

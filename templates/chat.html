@@ -11,14 +11,36 @@
                 var socket = io.connect('http://127.0.0.1:5000');
 
                 socket.on('message', function(msg) {
-                    if (msg=="!exit") { 
+                    var escape_str = msg.substr(msg.indexOf(':') + 2);
+                    console.log(escape_str)
+                    if (escape_str=="!exit") { 
                         window.location.href = '/'
-                    }});
+                    }
+                    else { 
+                        if (/\S/.test(msg)) {
+                            $('#message-display').append('<div>' + msg + '<div>')
+                        }
+                    }
+                    }
+                    );
+
+                    $.ajax({
+                    url: 'http://127.0.0.1:5000/chat/log',
+                    type: 'GET', 
+                    success: function(data) { 
+                        var spaced_data = data.replace(/\n/g, '<br/>');
+                        $('#message-display').append(spaced_data)
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("something went wrong")
+                    }
+                    }); 
 
                 $('#sendbutt').on('click', function() {
                     var message = $('#message-input').val()
-                    socket.send($('#message-input').val());
+                    socket.send(username + ": " + $('#message-input').val());
                     $('#message-input').val('');
+                    if (/\S/.test(message)) {
                     $.ajax({
                             type : "POST",
                             url : "http://127.0.0.1:5000/chat",
@@ -29,8 +51,8 @@
                                 console.log("Success")
                             }
                         });
+                } 
                 });
-
                 });
 
         </script>
