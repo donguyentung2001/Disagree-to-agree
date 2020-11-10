@@ -93,6 +93,7 @@ def chat(chatID):
     chat_ID=chat_db.child(chatID)
     if request.method == "POST":
         if request.json['msg'] == "!exit": 
+            session['umatch']='You have been unmatched'
             session.pop('chatID', None)
             chat_db.child(chatID).delete()
             return redirect("/")
