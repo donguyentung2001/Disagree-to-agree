@@ -10,6 +10,17 @@ from firebase_admin import credentials
 from firebase_admin import db
 import datetime
 
+# utilities
+import json
+from flask.json import jsonify
+import random
+import time
+
+#app setup
+app = Flask(__name__)
+app.secret_key = 'development key'
+
+# database set up
 cred = credentials.Certificate("database/firebase_key.json")
 
 firebase_admin.initialize_app(cred, {
@@ -19,16 +30,9 @@ firebase_admin.initialize_app(cred, {
 db = db.reference('')
 users_db = db.child('users')
 chat_db = db.child('chat')
+match_db = db.child("matchmaking")
 
-#test chat_db. will need to specify chat_ID based on each pair of users later.
-
-# utilities
-import json
-from flask.json import jsonify
-
-app = Flask(__name__)
-app.secret_key = 'development key'
-
+# chat (socket.io) setup
 socketio=SocketIO(app)
 
 @app.route('/', methods = ["GET", "POST"])
@@ -43,13 +47,54 @@ def homepage():
     else:
         return render_template('home.html', flash=data)
 
+@app.route('/matchmaking', methods = ["GET", "POST"])
+def matchmaking():
+    avail_user = match_db.get()
+    waiting_already = False
+    if avail_user != None:
+        for username in list(avail_user):
+            if str(session["user"]) == str(username):
+                waiting_already = True
+    if avail_user != None and not waiting_already:
+        avail_user = avail_user.items()
+        compatible_user = list(avail_user)[0]
+        chatID = session["user"] + compatible_user[0]
+        session["chatID"] = chatID
+        match_db.child(compatible_user[0]).update(
+            {"matched": chatID}
+        )
+
+    else:
+        match_db.set({session["user"]: {"matched": False}})
+        matched = False
+        while True:
+            user_match_update = match_db.child(session["user"]).get()
+            if user_match_update["matched"] != False: # matched
+                match_db.child(session["user"]).delete()
+                chatID = user_match_update["matched"]
+                session["chatID"] = chatID
+                matched = True
+            if matched == True:
+                break
+            else:
+                continue
+    return redirect("/chat")
+
+@app.route('/chat', methods = ["GET"])
+def redirect_to_chat():
+    if session.get("chatID"):
+        chatID = session["chatID"]
+        return redirect("/chat/" + str(chatID))
+    else:
+        return redirect("/matchmaking")
+
 @app.route('/chat/<chatID>', methods = ["GET", "POST"])
 def chat(chatID):
     chat_ID=chat_db.child(chatID)
     if request.method == "POST":
         if request.json['msg'] == "!exit": 
-            session['data']='You are unmatched'
-            chat_db.child(chatID).delete() 
+            session.pop("chatID", None)
+            chat_db.child(chatID).delete()
             return "OK"
         else:
             time=datetime.datetime.now().timestamp() * 1000
@@ -58,13 +103,16 @@ def chat(chatID):
             chat_ID.push({'time':time,'username': username,'message': msg})
             return "OK"
     else:
-        return render_template("chat.html",user=session['user'], chatID = chatID)
+        if str(chatID) != session["chatID"]:
+            return "You do not have permission. Please return"
+        else:
+            return render_template("chat.html",user=session['user'], chatID = chatID)
 
 @app.route('/chat/log/<chatID>', methods = ["GET", "POST"])
 def chat_log(chatID): 
     chat_ID=chat_db.child(chatID)
     message="" 
-    messages_content=chat_ID.get()
+    messages_content=chat_ID.order_by_child('time').limit_to_last(10).get()
     if messages_content != None:
         for message_content in messages_content: 
             message_content=chat_ID.child(message_content)
