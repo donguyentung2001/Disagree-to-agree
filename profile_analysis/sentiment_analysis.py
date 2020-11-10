@@ -3,7 +3,7 @@ import numpy as np
 from textblob import TextBlob
 from time import sleep
 import os
-from preprocess import preprocess, get_useful_words
+# from preprocess import preprocess, get_useful_words
 
 def analyze_google_sentiment(text_content):
     """
@@ -12,7 +12,7 @@ def analyze_google_sentiment(text_content):
     Args:
       text_content The text content to analyze
     """
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.getcwd(), 'yhack-55a358192c91.json')
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.getcwd(), 'profile_analysis','yhack-55a358192c91.json')
 
     client = language_v1.LanguageServiceClient()
 

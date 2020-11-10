@@ -52,6 +52,7 @@ def homepage():
 @app.route('/matchmaking', methods = ["GET", "POST"])
 def matchmaking():
     avail_user = match_db.get()
+    print("avail user:", avail_user)
     waiting_already = False
     if avail_user != None:
         for username in list(avail_user):
@@ -69,8 +70,11 @@ def matchmaking():
                 {"matched": chatID}
             )
             return redirect("/chat")
-
-    match_db.set({session["user"]: {"matched": False}})
+    user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
+    print(session['user'], session)
+    print(user_details)
+    return ValueError()
+    match_db.set({session["user"]: {"matched": False, "details": user_details}})
     matched = False
     while True and not waiting_already:
         user_match_update = match_db.child(session["user"]).get()
@@ -142,16 +146,16 @@ def register():
         _avatar = request.form["avatar"]
         _interest = []
         _message = []
-        _message-polarity = []
-        _message-subjectivity = []
+        _message_polarity = []
+        _message_subjectivity = []
         for key in request.form.keys():
             # TODO maybe make it a keyword adding box so they can add as many keywords as they want
             if key[0:8] == "interest":
                 _interest.append(request.form[key])
             elif key[0:7] == "message":
                 _message.append(request.form[key])
-                _message-polarity.append(sentiment_analysis.analyze_google_sentiment(request.form[key]))
-                _message-subjectivity.append(sentiment_analysis.find_sentiments(request.form[key]))
+                _message_polarity.append(sentiment_analysis.analyze_google_sentiment(request.form[key]))
+                _message_subjectivity.append(sentiment_analysis.find_sentiments(request.form[key]))
         if _password:
             _hashed_password = generate_password_hash(_password)
         user = users_db.order_by_child('email').equal_to(_email).get().items()
@@ -161,7 +165,7 @@ def register():
         if len(user) >= 1:
             return render_template("register.html", message = "This username already existed. Please enter a different username.")        
 
-        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "messages-polarity": _message-polarity, "messages-subjectivity": _message-subjectivity, "avatar": _avatar})
+        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "messages-polarity": _message_polarity, "messages-subjectivity": _message_subjectivity, "avatar": _avatar})
         return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")
@@ -196,6 +200,7 @@ def logout():
     session.pop('user_email', None)
     if 'credentials' in session:
         del session['credentials']
+        #TODO remove users from match database
     return redirect('/')
 
 if __name__ == "__main__":

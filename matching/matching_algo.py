@@ -1,6 +1,8 @@
 def match_users(user, avail_users):
+    print(user, avail_users)
     user_id = user[0]
     user_data = user[1]
+    print(user_data)
     user_interests = set(user_data['interest'])
     user_polarity_scores = user_data['messages-polarity']
     user_subjectivity_scores = user_data['messages-subjectivity']
