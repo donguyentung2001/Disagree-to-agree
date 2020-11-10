@@ -9,6 +9,7 @@
             $(document).ready(function() {
                 var username = '{{ user }}'
                 var socket = io.connect('http://127.0.0.1:5000');
+                var chatID = '{{chatID}}';
 
                 socket.on('message', function(msg) {
                     var escape_str = msg.substr(msg.indexOf(':') + 2);
@@ -23,9 +24,8 @@
                     }
                     }
                     );
-
                     $.ajax({
-                    url: 'http://127.0.0.1:5000/chat/log',
+                    url: 'http://127.0.0.1:5000/chat/log/' + chatID,
                     type: 'GET', 
                     success: function(data) { 
                         var spaced_data = data.replace(/\n/g, '<br/>');
@@ -47,7 +47,7 @@
                     
                     $.ajax({
                             type : "POST",
-                            url : "http://127.0.0.1:5000/chat",
+                            url : "http://127.0.0.1:5000/chat/" + chatID,
                             data: JSON.stringify({"msg": message}),
                             dataType:"json",
                             contentType: 'application/json;charset=UTF-8',

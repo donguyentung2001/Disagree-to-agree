@@ -43,13 +43,13 @@ def homepage():
     else:
         return render_template('home.html', flash=data)
 
-@app.route('/chat', methods = ["GET", "POST"])
-def chat():
-    chat_ID=chat_db.child('chatID')
+@app.route('/chat/<chatID>', methods = ["GET", "POST"])
+def chat(chatID):
+    chat_ID=chat_db.child(chatID)
     if request.method == "POST":
         if request.json['msg'] == "!exit": 
             session['data']='You are unmatched'
-            chat_db.child('chatID').delete() 
+            chat_db.child(chatID).delete() 
             return "OK"
         else:
             time=datetime.datetime.now().timestamp() * 1000
@@ -58,11 +58,11 @@ def chat():
             chat_ID.push({'time':time,'username': username,'message': msg})
             return "OK"
     else:
-        return render_template("chat.html",user=session['user'])
+        return render_template("chat.html",user=session['user'], chatID = chatID)
 
-@app.route('/chat/log', methods = ["GET", "POST"])
-def chat_log(): 
-    chat_ID=chat_db.child('chatID')
+@app.route('/chat/log/<chatID>', methods = ["GET", "POST"])
+def chat_log(chatID): 
+    chat_ID=chat_db.child(chatID)
     message="" 
     messages_content=chat_ID.get()
     if messages_content != None:
