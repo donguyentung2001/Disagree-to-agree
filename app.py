@@ -45,7 +45,7 @@ def homepage():
     if session.get("user"):
         return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"], flash = unmatch)
     else:
-        return render_template('home.html', flask = unmatch)
+        return render_template('home.html', flash = unmatch)
 
 @app.route('/matchmaking', methods = ["GET", "POST"])
 def matchmaking():

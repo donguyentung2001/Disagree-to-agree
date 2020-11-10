@@ -43,6 +43,7 @@
                         $('#message-input').toggle();
                         $('#sendbutt').toggle(); 
                         $('#loading').toggle();
+                        $('#exit').toggle();
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         alert("something went wrong")
@@ -69,6 +70,21 @@
                 });
                 });
 
+                $('#exit').on('click', function() {
+                    $.ajax({
+                            type : "POST",
+                            url : "http://127.0.0.1:5000/chat/" + chatID,
+                            data: JSON.stringify({"msg": "!exit"}),
+                            dataType:"json",
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function() {
+                                console.log("Success")
+                            }
+                        });
+                        setTimeout(function(){window.location.href = '/'}, 1000)
+                });
+
+
         </script>
         <div> Welcome to the chat room. You are chatting with a user. </div>
         <div> Type "!exit" if you want to stop chatting and return to the homepage. </div>
@@ -76,5 +92,6 @@
         <div id="message-display"> </div>
         <input type="text" id="message-input" hidden> 
         <button id="sendbutt" hidden> Send </button>
+        <button id="exit" hidden> Exit </button>
     </body>
 </html> 
