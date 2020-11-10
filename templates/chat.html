@@ -15,7 +15,17 @@
                     var escape_str = msg.substr(msg.indexOf(':') + 2);
                     console.log(escape_str)
                     if (escape_str=="!exit") { 
-                        window.location.href = '/'
+                        $.ajax({
+                            type : "POST",
+                            url : "http://127.0.0.1:5000/chat/" + chatID,
+                            data: JSON.stringify({"msg": "!exit"}),
+                            dataType:"json",
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function() {
+                                console.log("Success")
+                            }
+                        });
+                        setTimeout(function(){window.location.href = '/'}, 1000)
                     }
                     else { 
                         if (/\S/.test(msg)) {

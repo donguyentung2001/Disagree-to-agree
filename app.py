@@ -37,15 +37,15 @@ socketio=SocketIO(app)
 
 @app.route('/', methods = ["GET", "POST"])
 def homepage():
-    if "data" in session:
-        data= session['data']
+    if "unmatch" in session:
+        unmatch = session['unmatch']
     else:
-        data = ""
-    session['data'] = ''
+        unmatch = ""
+    session['unmatch'] = ''
     if session.get("user"):
-        return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"], flash=data)
+        return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"], flash = unmatch)
     else:
-        return render_template('home.html', flash=data)
+        return render_template('home.html', flask = unmatch)
 
 @app.route('/matchmaking', methods = ["GET", "POST"])
 def matchmaking():
@@ -82,7 +82,7 @@ def matchmaking():
 
 @app.route('/chat', methods = ["GET"])
 def redirect_to_chat():
-    if session.get("chatID"):
+    if "chatID" in session and session["chatID"] != None:
         chatID = session["chatID"]
         return redirect("/chat/" + str(chatID))
     else:
@@ -93,9 +93,9 @@ def chat(chatID):
     chat_ID=chat_db.child(chatID)
     if request.method == "POST":
         if request.json['msg'] == "!exit": 
-            session.pop("chatID", None)
+            session.pop('chatID', None)
             chat_db.child(chatID).delete()
-            return "OK"
+            return redirect("/")
         else:
             time=datetime.datetime.now().timestamp() * 1000
             username= session["user"]
@@ -181,6 +181,9 @@ def signin():
 @app.route('/logout')
 def logout():
     session.pop('user', None)
+    session.pop('chatID', None)
+    session.pop('user_avatar', None)
+    session.pop('user_email', None)
     if 'credentials' in session:
         del session['credentials']
     return redirect('/')
