@@ -12,18 +12,8 @@
 
                 socket.on('message', function(msg) {
                     if (msg=="!exit") { 
-                        $.ajax({
-                            type : "POST",
-                            url : "http://127.0.0.1:5000/chat",
-                            data: {'data': "Unmatched"},
-                            contentType: 'application/json;charset=UTF-8',
-                            success: function() {
-                                window.location.href = '/'
-                            }
-                        });
-                    }
-                }
-                );
+                        window.location.href = '/'
+                    }});
 
                 $('#sendbutt').on('click', function() {
                     var message = $('#message-input').val()
@@ -32,9 +22,8 @@
                     $.ajax({
                             type : "POST",
                             url : "http://127.0.0.1:5000/chat",
-                            data: {'user':username, 
-                            'msg': message, 
-                            },
+                            data: JSON.stringify({"msg": message}),
+                            dataType:"json",
                             contentType: 'application/json;charset=UTF-8',
                             success: function() {
                                 console.log("Success")

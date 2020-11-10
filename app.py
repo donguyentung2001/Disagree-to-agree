@@ -43,16 +43,23 @@ def homepage():
 
 @app.route('/chat', methods = ["GET", "POST"])
 def chat():
+    chat_ID=chat_db.child('chatID')
     if request.method == "POST":
-            if request.json['data']: 
-                session['data']='You are unmatched'
-            else: 
-                time=datetime.datetime.now()
-                username=request.json['username']
-                msg=request.json['msg']
-                chat_db.push({'time':time,'username': username,'message': msg})
-    return render_template("chat.html",user=session['user'])
+        if request.json['msg'] == "!exit": 
+            session['data']='You are unmatched'
+        else:
+            time=datetime.datetime.now().timestamp() * 1000
+            username= session["user"]
+            msg=request.json['msg']
+            chat_ID.push({'time':time,'username': username,'message': msg})
+    else:
+        return render_template("chat.html",user=session['user'])
 
+@app.route('/chat/log', methods = ["GET", "POST"])
+def chat_log(): 
+    chat_ID=chat_db.child('chatID')
+    message="" 
+    
 @socketio.on('message')
 def handle_message(msg): 
     send(msg,broadcast=True)
@@ -60,7 +67,6 @@ def handle_message(msg):
 @app.route('/register', methods = ["GET", "POST"])
 def register():
     if request.method == "POST":
-        print(request.form)
         _username = request.form["username"]
         _email = request.form["email"]
         _password = request.form["password"]
