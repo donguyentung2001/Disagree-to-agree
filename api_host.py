@@ -141,19 +141,19 @@ def chat_log(chatID):
         chat_ID=chat_db.child(chatID)
         message="" 
         messages_content=chat_ID.order_by_child('time').limit_to_last(10).get()
+        final_messages = []
         if messages_content != None:
             for message_content in messages_content: 
                 message_content=chat_ID.child(message_content)
-                message+= message_content.child("username").get()
-                message+= ": "
-                message+= message_content.child("message").get()
-                message+= "\n"
-        return Response("{}".format(message), status=200, mimetype='application/json')
+                user = message_content.child("username").get()
+                message = message_content.child("message").get()
+                final_messages.append({"user": user, "message": message})
+        return Response("{}".format(final_messages), status=200, mimetype='application/json')
     
     except Exception as e:
         return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
 
-@app.route('/chat/<chatID>', methods = ["GET", "POST"])
+@app.route('/chat/<chatID>', methods = ["POST"])
 def chat(chatID):
     try:
         chat_ID=chat_db.child(chatID)
