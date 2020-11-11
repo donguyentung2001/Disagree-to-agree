@@ -43,25 +43,31 @@ socketio=SocketIO(app)
 @app.route('/loggedIn', methods = ["GET"])
 def loggedIn():
     if session.get("user"):
-        return dict(session)
+        return Response(str(dict(session)), status=200, mimetype='application/json')
     else:
-        return False
+        return Response("{'logged_in' = 'False'}", status=200, mimetype='application/json')
 
 # logging the user out
 @app.route('/logout', methods = ["POST"])
 def logout():
     try:
+        # delete user from matchmaking database
+        matchmaking_instances = dict(match_db.order_by_child('email').equal_to(session["user_email"]).get().items())
+        matchmaking_instances = list(matchmaking_instances.keys())
+        for key in matchmaking_instances:
+            match_db.child(key).delete()
+
         session.pop('user', None)
         session.pop('chatID', None)
         session.pop('user_avatar', None)
         session.pop('user_email', None)
+        session.pop("logged_in", None)
         if 'credentials' in session:
             del session['credentials']
-            #TODO remove users from match database
-        return True
+        return Response("Success", status=200, mimetype='application/json')
 
     except Exception as e:
-        return e
+        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
 
 @app.route('/signin', methods = ["POST"])
 def signin():
@@ -86,33 +92,104 @@ def signin():
                     return Response("{'error':'Email doesn't exist'}", status=404, mimetype='application/json')
     
     except Exception as e:
-        return e
+        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
 
+@app.route('/register', methods = ["POST"])
+def register():
+    try:
+        _username = request.form["username"]
+        _email = request.form["email"]
+        _password = request.form["password"]
+        _party = request.form["party"]
+        _avatar = request.form["avatar"]
+        _interest = request.form["interest"]
+        _interest = _interest.split(",")
+        _message = []
+        _message_polarity = []
+        _message_subjectivity = []
+        for key in request.form.keys():
+            if key[0:7] == "message":
+                _message.append(request.form[key])
+                _message_polarity.append(sentiment_analysis.analyze_google_sentiment(request.form[key]))
+                _message_subjectivity.append(sentiment_analysis.find_sentiments(request.form[key]))
+        if _password:
+            _hashed_password = generate_password_hash(_password)
+        user = users_db.order_by_child('email').equal_to(_email).get().items()
+        if len(user) >= 1:
+            return Response("{'error':'Email existed'}", status=409, mimetype='application/json')
+        user = users_db.order_by_child('username').equal_to(_username).get().items()
+        if len(user) >= 1:
+            return Response("{'error':'Username existed'}", status=409, mimetype='application/json')      
 
-@app.route('/', methods = ["GET", "POST"])
-def homepage():
-    if "unmatch" in session:
-        unmatch = session['unmatch']
+        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "messages-polarity": _message_polarity, "messages-subjectivity": _message_subjectivity, "avatar": _avatar})
+        return Response("Success", status=200, mimetype='application/json')
+    
+    except Exception as e:
+        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+
+@app.route('/get_chatid', methods = ["GET"])
+def redirect_to_chat():
+    if "chatID" in session and session["chatID"] != None:
+        chatID = session["chatID"]
+        return Response("{'chatID':'{}'}".format(chatID), status=200, mimetype='application/json')
     else:
-        unmatch = ""
-    session['unmatch'] = ''
-    if session.get("user"):
-        return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"], flash = unmatch)
-    else:
-       return render_template('home.html', flash = unmatch)
+        return Response("{'error':'User not yet matched. Please run /matchmaking so that they can be matched.'}", status=401, mimetype='application/json')
 
-@app.route('/matchmaking', methods = ["GET", "POST"])
+@app.route('/chat/log/<chatID>', methods = ["GET"])
+def chat_log(chatID):
+    try:
+        chat_ID=chat_db.child(chatID)
+        message="" 
+        messages_content=chat_ID.order_by_child('time').limit_to_last(10).get()
+        if messages_content != None:
+            for message_content in messages_content: 
+                message_content=chat_ID.child(message_content)
+                message+= message_content.child("username").get()
+                message+= ": "
+                message+= message_content.child("message").get()
+                message+= "\n"
+        return Response("{}".format(message), status=200, mimetype='application/json')
+    
+    except Exception as e:
+        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+
+@app.route('/chat/<chatID>', methods = ["GET", "POST"])
+def chat(chatID):
+    try:
+        chat_ID=chat_db.child(chatID)
+    except:
+        return Response("{'error':'chatID not in database'}", status=404, mimetype='application/json')
+    
+    try:
+        if request.json['msg'] == "!exit":
+            session['unmatch']='You have been unmatched'
+            session.pop('chatID', None)
+            chat_db.child(chatID).delete()
+            return Response("Success", status=200, mimetype='application/json')
+        else:
+            time=datetime.datetime.now().timestamp() * 1000
+            username= session["user"]
+            msg=request.json['msg']
+            chat_ID.push({'time':time,'username': username,'message': msg})
+            return Response("Success", status=200, mimetype='application/json')
+
+    except Exception as e:
+        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+
+@socketio.on('message')
+def handle_message(msg): 
+    send(msg,broadcast=True)
+
+@app.route('/matchmaking', methods = ["POST"])
 def matchmaking():
     avail_user = match_db.get()
     waiting_already = False
     if avail_user != None:
-        # avail_user = avail_user.items()
         for uid, user_profile in avail_user.items():
             if str(session["user_email"]) == str(list(user_profile.keys())[0]):
                 waiting_already = True
-                # TODO should we disable the match button so that they cannot click again?
+
     if avail_user != None and not waiting_already:
-        # avail_user = avail_user.items()
         compatible_user = matching_algo.match_users([session["user_email"], users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()], [v for k, v in avail_user.items()])
         # compatible user is the email for the other user
         if compatible_user is not None:
@@ -120,10 +197,8 @@ def matchmaking():
             session["chatID"] = chatID
             compatible_user_node = [v for k,v in match_db.get().items() if v['email'] == compatible_user][0]
             match_db.child(compatible_user_node['match_key']).set({'matched': chatID})
-            # match_db.child(compatible_user).update(
-            #     {"matched": chatID}
-            # )
-            return redirect("/chat")
+            return Response(str(dict(session)), status=200, mimetype='application/json')
+
         else:
             user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
             for _, details in user_details:
@@ -161,88 +236,7 @@ def matchmaking():
             else:
                 continue
 
-    return redirect("/chat")
-
-@app.route('/chat', methods = ["GET"])
-def redirect_to_chat():
-    if "chatID" in session and session["chatID"] != None:
-        chatID = session["chatID"]
-        return redirect("/chat/" + str(chatID))
-    else:
-        return redirect("/matchmaking")
-
-@app.route('/chat/<chatID>', methods = ["GET", "POST"])
-def chat(chatID):
-    chat_ID=chat_db.child(chatID)
-    if request.method == "POST":
-        if request.json['msg'] == "!exit":
-            session['unmatch']='You have been unmatched'
-            session.pop('chatID', None)
-            chat_db.child(chatID).delete()
-            return "OK"
-        else:
-            time=datetime.datetime.now().timestamp() * 1000
-            username= session["user"]
-            msg=request.json['msg']
-            chat_ID.push({'time':time,'username': username,'message': msg})
-            return "OK"
-    else:
-        if str(chatID) != session["chatID"]:
-            return "You do not have permission. Please return"
-        else:
-            return render_template("chat.html",user=session['user'], chatID = chatID)
-
-@app.route('/chat/log/<chatID>', methods = ["GET", "POST"])
-def chat_log(chatID): 
-    chat_ID=chat_db.child(chatID)
-    message="" 
-    messages_content=chat_ID.order_by_child('time').limit_to_last(10).get()
-    if messages_content != None:
-        for message_content in messages_content: 
-            message_content=chat_ID.child(message_content)
-            message+= message_content.child("username").get()
-            message+= ": "
-            message+= message_content.child("message").get()
-            message+= "\n" 
-    return message
-
-@socketio.on('message')
-def handle_message(msg): 
-    send(msg,broadcast=True)
-
-@app.route('/register', methods = ["GET", "POST"])
-def register():
-    if request.method == "POST":
-        _username = request.form["username"]
-        _email = request.form["email"]
-        _password = request.form["password"]
-        _party = request.form["party"]
-        _avatar = request.form["avatar"]
-        _interest = []
-        _message = []
-        _message_polarity = []
-        _message_subjectivity = []
-        for key in request.form.keys():
-            # TODO maybe make it a keyword adding box so they can add as many keywords as they want
-            if key[0:8] == "interest":
-                _interest.append(request.form[key])
-            elif key[0:7] == "message":
-                _message.append(request.form[key])
-                _message_polarity.append(sentiment_analysis.analyze_google_sentiment(request.form[key]))
-                _message_subjectivity.append(sentiment_analysis.find_sentiments(request.form[key]))
-        if _password:
-            _hashed_password = generate_password_hash(_password)
-        user = users_db.order_by_child('email').equal_to(_email).get().items()
-        if len(user) >= 1:
-            return render_template("register.html", message = "This user email already existed. Please enter a different email.")
-        user = users_db.order_by_child('username').equal_to(_username).get().items()
-        if len(user) >= 1:
-            return render_template("register.html", message = "This username already existed. Please enter a different username.")        
-
-        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "messages-polarity": _message_polarity, "messages-subjectivity": _message_subjectivity, "avatar": _avatar})
-        return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
-    else:
-        return render_template("register.html")
+    return Response(str(dict(session)), status=200, mimetype='application/json')
 
 if __name__ == "__main__":
     socketio.run(app)

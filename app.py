@@ -166,15 +166,13 @@ def register():
         _password = request.form["password"]
         _party = request.form["party"]
         _avatar = request.form["avatar"]
-        _interest = []
+        _interest = request.form["interest"]
+        _interest = _interest.split(",")
         _message = []
         _message_polarity = []
         _message_subjectivity = []
         for key in request.form.keys():
-            # TODO maybe make it a keyword adding box so they can add as many keywords as they want
-            if key[0:8] == "interest":
-                _interest.append(request.form[key])
-            elif key[0:7] == "message":
+            if key[0:7] == "message":
                 _message.append(request.form[key])
                 _message_polarity.append(sentiment_analysis.analyze_google_sentiment(request.form[key]))
                 _message_subjectivity.append(sentiment_analysis.find_sentiments(request.form[key]))
@@ -216,6 +214,11 @@ def signin():
 
 @app.route('/logout')
 def logout():
+    # delete user from matchmaking database
+    matchmaking_instances = dict(match_db.order_by_child('email').equal_to(session["user_email"]).get().items())
+    matchmaking_instances = list(matchmaking_instances.keys())
+    for key in matchmaking_instances:
+        match_db.child(key).delete()
     session.pop('user', None)
     session.pop('chatID', None)
     session.pop('user_avatar', None)
