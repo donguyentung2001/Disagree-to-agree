@@ -2,13 +2,13 @@ def match_users(user, avail_users):
     for _, details in user[1]:
         user_data = details
     user_id = user[0]
-    print(user_data, avail_users)
     user_interests = set(user_data['interest'])
     user_polarity_scores = user_data['messages-polarity']
     user_subjectivity_scores = user_data['messages-subjectivity']
     for avail_user in avail_users:
         avail_user_id = avail_user[0]
         avail_user_data = avail_user[1]['details']
+        print('data', avail_user_data)
         avail_user_interests = set(avail_user_data['interest'])
         interest_intersection = avail_user_interests & user_interests
         # if len(interest_intersection) < 3:
