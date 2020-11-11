@@ -52,41 +52,44 @@ def homepage():
 @app.route('/matchmaking', methods = ["GET", "POST"])
 def matchmaking():
     avail_user = match_db.get()
+    print("avail user", avail_user)
     waiting_already = False
-    print("avail_user", avail_user)
     if avail_user != None:
-        for username in list(avail_user):
-            if str(session["user"]) == str(username):
+        # avail_user = avail_user.items()
+        for uid, user_profile in avail_user.items():
+            if str(session["user_email"]) == str(list(user_profile.keys())[0]):
                 waiting_already = True
                 # TODO should we disable the match button so that they cannot click again?
     if avail_user != None and not waiting_already:
-        avail_user = avail_user.items()
-        compatible_user = matching_algo.match_users([session["user"], users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()], list(avail_user))
+        # avail_user = avail_user.items()
+        compatible_user = matching_algo.match_users([session["user_email"], users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()], [v for k, v in avail_user.items()])
         print('compatible user: ', compatible_user)
-        # compatible user is the id for the other user
+        # compatible user is the email for the other user
         if compatible_user is not None:
-            chatID = session["user"] + compatible_user
+            chatID = session["user_email"] + compatible_user
             session["chatID"] = chatID
-            match_db.child(compatible_user).update(
-                {"matched": chatID}
-            )
+            compatible_user_node = [x[1][list(x[1].keys())[0]] for x in list(match_db.get().items()) if list(x[1].keys())[0] == compatible_user][0]
+            print("comparible user node", compatible_user_node)
+            compatible_user_node.update({'matched': chatID})
+            # match_db.child(compatible_user).update(
+            #     {"matched": chatID}
+            # )
             return redirect("/chat")
         else:
             user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
             for _, details in user_details:
                 user_profile = details
-            match_db.set({session["user"]: {"matched": False, "details": user_profile}})
+            match_db.push({session["user_email"]: {"matched": False, "details": user_profile}})
             matched = False
-            while True and not waiting_already:
-                user_match_update = match_db.child(session["user"]).get()
-                print("user_match_update: ", session['user'], user_match_update, session["user"] + "ishere")
+            while True:
+                user_match_update = [x[1][list(x[1].keys())[0]] for x in list(match_db.get().items()) if list(x[1].keys())[0] == session["user_email"]][0]
+                print("user_match_update: ", session['user_email'], user_match_update, session["user_email"] + "ishere")
                 if user_match_update["matched"] != False: # matched
-                    print('breached1')
-                    match_db.child(session["user"]).delete()
+                    match_db.order_by_child('email')(session["user_email"]).delete()
                     chatID = user_match_update["matched"]
                     session["chatID"] = chatID
                     matched = True
-                print("session chatid: ", session)
+                # print("session chatid: ", session)
                 if matched == True:
                     break
                 else:
@@ -95,18 +98,17 @@ def matchmaking():
         user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
         for _, details in user_details:
             user_profile = details
-        match_db.set({session["user"]: {"matched": False, "details": user_profile}})
+        match_db.push({session["user_email"]: {"matched": False, "details": user_profile}})
         matched = False
         while True:
-            user_match_update = match_db.child(session["user"]).get()
-            print("user_match_update: ", session['user'], user_match_update)
+            user_match_update = [x[1][list(x[1].keys())[0]] for x in list(match_db.get().items()) if list(x[1].keys())[0] == session["user_email"]][0]
+            # print("user_match_update: ", session['user_email'], user_match_update, session["user_email"] + "ishere")
             if user_match_update["matched"] != False: # matched
-                print('breached2')
-                match_db.child(session["user"]).delete()
+                match_db.child(session["user_email"]).delete()
                 chatID = user_match_update["matched"]
                 session["chatID"] = chatID
                 matched = True
-            print("session chatid: ", session)
+            # print("session chatid: ", session)
             if matched == True:
                 break
             else:
