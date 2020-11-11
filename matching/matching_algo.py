@@ -14,7 +14,7 @@ def match_users(user, avail_users):
             continue
         avail_user_polarity_scores = avail_user_data['messages-polarity']
         avail_user_subjectivity_scores = avail_user_data['messages-subjectivity']
-        diff_polarity_scores = [abs(a-b) for a, b in zip(avail_user_polarity_scores, user_polarity_scores) if abs(a-b) < 0.75]
+        diff_polarity_scores = [abs(a-b) for a, b in zip(avail_user_polarity_scores, user_polarity_scores) if abs(a-b) > 0.75]
         # diff_polarity_scores = [abs(a-b) for a, b in zip(avail_user_polarity_scores, user_polarity_scores)]
         diff_subjectivity_scores = [abs(a-b) for a, b in zip(avail_user_subjectivity_scores, user_subjectivity_scores) if abs(a-b) < 0.35]
         # diff_subjectivity_scores = [abs(a-b) for a, b in zip(avail_user_subjectivity_scores, user_subjectivity_scores)]
