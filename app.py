@@ -15,6 +15,8 @@ import json
 from flask.json import jsonify
 import random
 import time
+from profile_analysis import sentiment_analysis
+from matching import matching_algo
 
 #app setup
 app = Flask(__name__)
@@ -45,39 +47,82 @@ def homepage():
     if session.get("user"):
         return render_template('signedHome.html', user = session["user"], avatar = session["user_avatar"], flash = unmatch)
     else:
+<<<<<<< HEAD
         return render_template('home.html', flash = unmatch)
+=======
+       return render_template('home.html', flash = unmatch)
+>>>>>>> e453c766d4057bb563f4c00ef963119bc2e86f5d
 
 @app.route('/matchmaking', methods = ["GET", "POST"])
 def matchmaking():
     avail_user = match_db.get()
+    print("avail user", avail_user)
     waiting_already = False
     if avail_user != None:
-        for username in list(avail_user):
-            if str(session["user"]) == str(username):
+        # avail_user = avail_user.items()
+        for uid, user_profile in avail_user.items():
+            if str(session["user_email"]) == str(list(user_profile.keys())[0]):
                 waiting_already = True
+                # TODO should we disable the match button so that they cannot click again?
     if avail_user != None and not waiting_already:
-        avail_user = avail_user.items()
-        compatible_user = list(avail_user)[0]
-        chatID = session["user"] + compatible_user[0]
-        session["chatID"] = chatID
-        match_db.child(compatible_user[0]).update(
-            {"matched": chatID}
-        )
-
+        # avail_user = avail_user.items()
+        compatible_user = matching_algo.match_users([session["user_email"], users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()], [v for k, v in avail_user.items()])
+        print('compatible user: ', compatible_user)
+        # compatible user is the email for the other user
+        if compatible_user is not None:
+            chatID = session["user_email"] + compatible_user
+            session["chatID"] = chatID
+            compatible_user_node = [v for k,v in match_db.get().items() if v['email'] == compatible_user][0]
+            print("comparible user node", compatible_user_node)
+            match_db.child(compatible_user_node['match_key']).set({'matched': chatID})
+            # match_db.child(compatible_user).update(
+            #     {"matched": chatID}
+            # )
+            return redirect("/chat")
+        else:
+            user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
+            for _, details in user_details:
+                user_profile = details
+            waiting_match_key = match_db.push().key
+            match_db.child(waiting_match_key).set({"email":session["user_email"], "matched": False, "details": user_profile, 'match_key': waiting_match_key})
+            matched = False
+            while True:
+                print("try", match_db.get(waiting_match_key)[0][waiting_match_key])
+                user_match_update = match_db.get(waiting_match_key)[0][waiting_match_key]
+                # print("user_match_update: ", session['user_email'], user_match_update, session["user_email"] + "ishere")
+                if user_match_update["matched"] != False: # matched
+                    match_db.child(waiting_match_key).delete()
+                    chatID = user_match_update["matched"]
+                    session["chatID"] = chatID
+                    matched = True
+                # print("session chatid: ", session)
+                if matched == True:
+                    break
+                else:
+                    continue
     else:
-        match_db.set({session["user"]: {"matched": False}})
+        user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
+        for _, details in user_details:
+            user_profile = details
+        waiting_match_key = match_db.push().key
+        match_db.child(waiting_match_key).set({"email":session["user_email"], "matched": False, "details": user_profile, 'match_key': waiting_match_key})
+        # print("key", waiting_match_key, match_db.child(waiting_match_key).delete())
         matched = False
         while True:
-            user_match_update = match_db.child(session["user"]).get()
+            print("try", match_db.get(waiting_match_key)[0][waiting_match_key])
+            user_match_update = match_db.get(waiting_match_key)[0][waiting_match_key]
+            # print("user_match_update: ", session['user_email'], user_match_update, session["user_email"] + "ishere")
             if user_match_update["matched"] != False: # matched
-                match_db.child(session["user"]).delete()
+                match_db.child(waiting_match_key).delete()
                 chatID = user_match_update["matched"]
                 session["chatID"] = chatID
                 matched = True
+            # print("session chatid: ", session)
             if matched == True:
                 break
             else:
                 continue
+
     return redirect("/chat")
 
 @app.route('/chat', methods = ["GET"])
@@ -92,10 +137,11 @@ def redirect_to_chat():
 def chat(chatID):
     chat_ID=chat_db.child(chatID)
     if request.method == "POST":
-        if request.json['msg'] == "!exit": 
+        if request.json['msg'] == "!exit":
+            session['unmatch']='You have been unmatched'
             session.pop('chatID', None)
             chat_db.child(chatID).delete()
-            return redirect("/")
+            return "OK"
         else:
             time=datetime.datetime.now().timestamp() * 1000
             username= session["user"]
@@ -136,12 +182,16 @@ def register():
         _avatar = request.form["avatar"]
         _interest = []
         _message = []
+        _message_polarity = []
+        _message_subjectivity = []
         for key in request.form.keys():
+            # TODO maybe make it a keyword adding box so they can add as many keywords as they want
             if key[0:8] == "interest":
                 _interest.append(request.form[key])
             elif key[0:7] == "message":
                 _message.append(request.form[key])
-
+                _message_polarity.append(sentiment_analysis.analyze_google_sentiment(request.form[key]))
+                _message_subjectivity.append(sentiment_analysis.find_sentiments(request.form[key]))
         if _password:
             _hashed_password = generate_password_hash(_password)
         user = users_db.order_by_child('email').equal_to(_email).get().items()
@@ -151,7 +201,7 @@ def register():
         if len(user) >= 1:
             return render_template("register.html", message = "This username already existed. Please enter a different username.")        
 
-        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "avatar": _avatar})
+        users_db.push({"username": _username, "email": _email, "password": _hashed_password, "party": _party, "interest": _interest, "messages": _message, "messages-polarity": _message_polarity, "messages-subjectivity": _message_subjectivity, "avatar": _avatar})
         return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")
@@ -186,6 +236,7 @@ def logout():
     session.pop('user_email', None)
     if 'credentials' in session:
         del session['credentials']
+        #TODO remove users from match database
     return redirect('/')
 
 if __name__ == "__main__":
