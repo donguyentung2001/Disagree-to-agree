@@ -1,5 +1,5 @@
 # web framework
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, Response
 from flask.wrappers import Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import SocketIO, send
@@ -36,6 +36,58 @@ match_db = db.child("matchmaking")
 
 # chat (socket.io) setup
 socketio=SocketIO(app)
+
+# api routes
+
+# if the user is loggedin
+@app.route('/loggedIn', methods = ["GET"])
+def loggedIn():
+    if session.get("user"):
+        return dict(session)
+    else:
+        return False
+
+# logging the user out
+@app.route('/logout', methods = ["POST"])
+def logout():
+    try:
+        session.pop('user', None)
+        session.pop('chatID', None)
+        session.pop('user_avatar', None)
+        session.pop('user_email', None)
+        if 'credentials' in session:
+            del session['credentials']
+            #TODO remove users from match database
+        return True
+
+    except Exception as e:
+        return e
+
+@app.route('/signin', methods = ["POST"])
+def signin():
+    try:
+        if request.method == "POST":
+            _email = request.form["email"]
+            _password = request.form["password"]
+            user = users_db.order_by_child('email').equal_to(_email).get().items()
+            if len(user) > 1:
+                return Response("{'error':'Internal Database Error (more than one user detected). Contact Trung so he can delete the record from the database.'}", status=500, mimetype='application/json')
+            else:
+                for _, user in user:
+                    if check_password_hash(user["password"], _password):
+                        session["user"] = user["username"]
+                        session["user_email"] = user["email"]
+                        session["user_avatar"] = user["avatar"]
+                        session["logged_in"] = True
+                        return Response(str(dict(session)), status=200, mimetype='application/json')
+                    else:
+                        return Response("{'error':'Wrong password'}", status=401, mimetype='application/json')
+                else:
+                    return Response("{'error':'Email doesn't exist'}", status=404, mimetype='application/json')
+    
+    except Exception as e:
+        return e
+
 
 @app.route('/', methods = ["GET", "POST"])
 def homepage():
@@ -191,39 +243,6 @@ def register():
         return render_template("signin.html", message = "Thank you for registering. Sign in to join us now!")
     else:
         return render_template("register.html")
-
-@app.route('/signin', methods = ["GET", "POST"])
-def signin():
-    if request.method == "POST":
-        _email = request.form["email"]
-        _password = request.form["password"]
-        user = users_db.order_by_child('email').equal_to(_email).get().items()
-        if len(user) > 1:
-            return "Internal Database Error (more than one user detected)"
-        else:
-            for _, user in user:
-                if check_password_hash(user["password"], _password):
-                    session["user"] = user["username"]
-                    session["user_email"] = user["email"]
-                    session["user_avatar"] = user["avatar"]
-                    return render_template("complete.html", user = session["user"])
-                else:
-                    return render_template("signin.html", message = "Wrong password")
-            else:
-                return render_template("signin.html", message = "Email doesn't exist")
-    else:
-        return render_template("signin.html")
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    session.pop('chatID', None)
-    session.pop('user_avatar', None)
-    session.pop('user_email', None)
-    if 'credentials' in session:
-        del session['credentials']
-        #TODO remove users from match database
-    return redirect('/')
 
 if __name__ == "__main__":
     socketio.run(app)
