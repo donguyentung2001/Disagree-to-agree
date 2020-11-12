@@ -5,11 +5,15 @@ import './App.css';
 import 'antd/dist/antd.css';
 import './styles/_base.scss';
 import Questionaire from './pages/Questionaire';
+import NavigationBar from './components/common/NavigationBar';
 
 function App() {
   return (
     <div className="App">
-      <Questionaire />
+      <NavigationBar />
+      <div style={{ marginTop: 100 }}>
+        <Questionaire />
+      </div>
     </div>
   );
 }
