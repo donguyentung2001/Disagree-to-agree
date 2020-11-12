@@ -265,7 +265,7 @@ def get_profile():
         print(e)
         return Response(str(e), status=500, mimetype='application/json')
 
-@app.route('/bot_casual',methods=["GET","POST"]) 
+@app.route('/bot_casual',methods=["GET"]) 
 def bot_casual(): 
     try: 
         session['random-number']+=1
@@ -274,7 +274,7 @@ def bot_casual():
         print(e)
         return Response(str(e),status=500, mimetype='application/json')
 
-@app.route('/bot_immigration',methods=["GET","POST"]) 
+@app.route('/bot_immigration',methods=["GET"]) 
 def bot_immigration(): 
     try: 
         session['random-number']+=1
@@ -283,7 +283,7 @@ def bot_immigration():
         print(e)
         return Response(str(e),status=500, mimetype='application/json')
 
-@app.route('/bot_economics',methods=["GET","POST"]) 
+@app.route('/bot_economics',methods=["GET"]) 
 def bot_economics():  
     try:
         session['random-number']+=1
@@ -293,7 +293,7 @@ def bot_economics():
         return Response(str(e),status=500, mimetype='application/json')
 
 
-@app.route('/bot_healthcare',methods=["GET","POST"]) 
+@app.route('/bot_healthcare',methods=["GET"]) 
 def bot_healthcare():  
     try:
         session['random-number']+=1
@@ -302,7 +302,7 @@ def bot_healthcare():
         print(e)
         return Response(str(e),status=500, mimetype='application/json')
 
-@app.route('/bot_education',methods=["GET","POST"]) 
+@app.route('/bot_education',methods=["GET"]) 
 def bot_education():  
     try:
         session['random-number']+=1
