@@ -252,7 +252,7 @@ def matchmaking():
 def get_profile():
     try:
         if session.get("user"):
-            db_users = dict(users_db.order_by_child('username').equal_to(session.get("user")).get().items())
+            db_users = users_db.order_by_child('username').equal_to(session.get("user")).get().items()
             users = []
             for k, v in db_users:
                 users.append(v)
