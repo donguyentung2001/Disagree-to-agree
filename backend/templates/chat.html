@@ -31,6 +31,74 @@
                             $('#message-display').append('<div>' + msg + '<div>')
                         }
                     }
+                    if (reduced_msg == "!immigration" || reduced_msg == "!casual" || reduced_msg == "!economics" || reduced_msg == "!healthcare" ||
+                    reduced_msg == "!education") { 
+                        if (reduced_msg == "!immigration") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_immigration',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!casual") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_casual',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!economics") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_economics',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!healthcare") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_healthcare',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!education") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_education',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                    }
                     }
                     );
                     $.ajax({
@@ -94,6 +162,7 @@
     
         </script>
         <div> Welcome to the chat room. You are chatting with {{otherusername}}. </div>
+        <div> You can type "!casual", "!immigration", "!economics", "!healthcare", "!education" to receive a random question from our chatbot on such topics.</div>
         <div id="loading"> Loading... </div>
         <div id="message-display"> </div>
         <input type="text" id="message-input" hidden>
