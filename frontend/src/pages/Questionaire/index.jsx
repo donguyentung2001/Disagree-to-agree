@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-template-curly-in-string */
 import {
   Radio, Form, Input, Button,
 } from 'antd';
