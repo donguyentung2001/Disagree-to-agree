@@ -7,6 +7,16 @@ $heading-size: 1.1rem;
 $primary-size: 1rem;
 $secondary-size: 0.7rem;
 
+.black-box {
+  background: $black !important;
+  color: $white !important;
+}
+
+.white-box {
+  background: $white !important;
+  color: $black !important;
+}
+
 .full-height {
   height: 100%;
 }

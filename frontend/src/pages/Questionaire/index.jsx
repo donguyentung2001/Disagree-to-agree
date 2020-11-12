@@ -17,10 +17,6 @@ const layout = {
   layout: 'vertical',
 };
 
-const validateMessages = {
-  required: '${label} is required!',
-};
-
 const Questionaire = () => {
   const [option, setOption] = useState('republican');
 
@@ -39,11 +35,11 @@ const Questionaire = () => {
         {...layout}
         id="questionaire-body"
         name="nest-messages"
+        initialValues={{ identity: 'republican' }}
         onFinish={onFinish}
-        validateMessages={validateMessages}
       >
         <Form.Item
-          name={['user', 'identity']}
+          name="identity"
           label="Do you identify as:"
           rules={[{ required: true }]}
         >
@@ -55,31 +51,48 @@ const Questionaire = () => {
           />
         </Form.Item>
         <Form.Item
-          name={['user', 'Interest']}
+          name="interest"
           label="Type in your interest, seperated by a comma (,):"
         >
           <Input />
         </Form.Item>
         <Form.Item
-          name={['user', 'healthcare']}
+          name="healthcare"
           label="What do you think about universal healthcare?"
         >
           <Input.TextArea />
         </Form.Item>
-        <Form.Item name={['user', 'income']} label="What do you think about universal basic income?">
+        <Form.Item
+          name="income"
+          label="What do you think about universal basic income?"
+        >
           <Input.TextArea />
         </Form.Item>
-        <Form.Item name={['user', 'immigrant']} label="What do you think about allowing more immigrants into the US?">
+        <Form.Item
+          name="immigrant"
+          label="What do you think about allowing more immigrants into the US?"
+        >
           <Input.TextArea />
         </Form.Item>
-        <Form.Item name={['user', 'tax']} label="What do you think about making the rich pay more for taxes?">
+        <Form.Item
+          name="tax"
+          label="What do you think about making the rich pay more for taxes?"
+        >
           <Input.TextArea />
         </Form.Item>
-        <Form.Item name={['user', 'education']} label="Should education be free??">
+        <Form.Item
+          name="education"
+          label="Should education be free??"
+        >
           <Input.TextArea />
         </Form.Item>
         <Form.Item wrapperCol={{ span: 24 }}>
-          <Button style={{ marginLeft: 'auto', marginRight: 'auto' }} type="primary" htmlType="submit">
+          <div className="encourage-message">Yay, you finished it!</div>
+          <Button
+            size="large"
+            htmlType="submit"
+            className="black-box"
+          >
             Submit
           </Button>
         </Form.Item>
