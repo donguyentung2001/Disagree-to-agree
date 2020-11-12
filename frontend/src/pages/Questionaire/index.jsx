@@ -1,0 +1,104 @@
+/* eslint-disable react/jsx-props-no-spreading */
+/* eslint-disable no-template-curly-in-string */
+import {
+  Radio, Form, Input, Button,
+} from 'antd';
+import React, { useState } from 'react';
+
+import './index.scss';
+
+const options = [
+  { label: 'Republican', value: 'republican' },
+  { label: 'Democrats', value: 'democrats' },
+  { label: 'Other', value: 'other' },
+];
+
+const layout = {
+  layout: 'vertical',
+};
+
+const Questionaire = () => {
+  const [option, setOption] = useState('republican');
+
+  const setIdentity = (e) => {
+    setOption(e.target.value);
+  };
+
+  const onFinish = (values) => {
+    console.log(values);
+  };
+
+  return (
+    <>
+      <h1>Tell us a little bit about you!</h1>
+      <Form
+        {...layout}
+        id="questionaire-body"
+        name="nest-messages"
+        initialValues={{ identity: 'republican' }}
+        onFinish={onFinish}
+      >
+        <Form.Item
+          name="identity"
+          label="Do you identify as:"
+          rules={[{ required: true }]}
+        >
+          <Radio.Group
+            options={options}
+            onChange={setIdentity}
+            value={option}
+            optionType="button"
+          />
+        </Form.Item>
+        <Form.Item
+          name="interest"
+          label="Type in your interest, seperated by a comma (,):"
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="healthcare"
+          label="What do you think about universal healthcare?"
+        >
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item
+          name="income"
+          label="What do you think about universal basic income?"
+        >
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item
+          name="immigrant"
+          label="What do you think about allowing more immigrants into the US?"
+        >
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item
+          name="tax"
+          label="What do you think about making the rich pay more for taxes?"
+        >
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item
+          name="education"
+          label="Should education be free??"
+        >
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item wrapperCol={{ span: 24 }}>
+          <div className="encourage-message">Yay, you finished it!</div>
+          <Button
+            size="large"
+            htmlType="submit"
+            className="black-box"
+          >
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
+  );
+};
+
+export default Questionaire;

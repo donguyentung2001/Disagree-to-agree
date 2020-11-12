@@ -1,0 +1,45 @@
+@import "src/styles/_base";
+@import "src/styles/_mixins";
+
+h1 {
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.ant-form-item-label > label {
+  font-weight: 500 !important;
+  font-size: $heading-size !important;
+}
+
+#questionaire-body {
+  text-align: left;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 0;
+}
+
+.ant-radio-group > label {
+  margin-right: 20px;
+  border-radius: 3px !important;
+  border: 1px solid #d9d9d9;
+}
+
+.ant-radio-button-wrapper:not(:first-child)::before {
+  width: 0px;
+}
+
+button {
+  display: block !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+button:hover {
+  @include scale(1.1);
+}
+
+.encourage-message {
+  text-align: center;
+  margin-bottom: 5px !important;
+}
