@@ -1,7 +1,7 @@
 Docs for APIs for front-end
 
 
-### /loggedIn [GET]
+### /loggedin [GET]
 
 Return whether the user is logged in
 
@@ -23,7 +23,7 @@ Output:
     - if not: error return
 
 
-### /signin [POST]
+### /login [POST]
 
 sign the user in and init the session
 
@@ -31,6 +31,18 @@ Input: "email", "password"
 
 Output: 
 - Success: {} full session information, with "user" in key
+- Fail: {'error': error_message}
+
+
+
+### /get_profile [GET]
+
+get the user profile
+
+Input: None - session based
+
+Output: 
+- Success: {} full user information
 - Fail: {'error': error_message}
 
 

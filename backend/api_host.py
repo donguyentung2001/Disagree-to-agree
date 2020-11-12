@@ -40,7 +40,7 @@ socketio=SocketIO(app)
 # api routes
 
 # if the user is loggedin
-@app.route('/loggedIn', methods = ["GET"])
+@app.route('/loggedin', methods = ["GET"])
 def loggedIn():
     if session.get("user"):
         return Response(str(dict(session)), status=200, mimetype='application/json')
@@ -67,9 +67,11 @@ def logout():
         return Response("Success", status=200, mimetype='application/json')
 
     except Exception as e:
-        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+        print(e)
+        return Response(str(e), status=500, mimetype='application/json')
 
-@app.route('/signin', methods = ["POST"])
+#sign the user in
+@app.route('/login', methods = ["POST"])
 def signin():
     try:
         if request.method == "POST":
@@ -92,8 +94,10 @@ def signin():
                     return Response("{'error':'Email doesn't exist'}", status=404, mimetype='application/json')
     
     except Exception as e:
-        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+        print(e)
+        return Response(str(e), status=500, mimetype='application/json')
 
+# registering the user
 @app.route('/register', methods = ["POST"])
 def register():
     try:
@@ -125,8 +129,10 @@ def register():
         return Response("Success", status=200, mimetype='application/json')
     
     except Exception as e:
-        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+        print(e)
+        return Response(str(e), status=500, mimetype='application/json')
 
+# return chat ID
 @app.route('/get_chatid', methods = ["GET"])
 def redirect_to_chat():
     if "chatID" in session and session["chatID"] != None:
@@ -135,6 +141,7 @@ def redirect_to_chat():
     else:
         return Response("{'error':'User not yet matched. Please run /matchmaking so that they can be matched.'}", status=401, mimetype='application/json')
 
+#return chat history
 @app.route('/chat/log/<chatID>', methods = ["GET"])
 def chat_log(chatID):
     try:
@@ -151,8 +158,10 @@ def chat_log(chatID):
         return Response("{}".format(final_messages), status=200, mimetype='application/json')
     
     except Exception as e:
-        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+        print(e)
+        return Response(str(e), status=500, mimetype='application/json')
 
+# post chat messages to DB
 @app.route('/chat/<chatID>', methods = ["POST"])
 def chat(chatID):
     try:
@@ -174,7 +183,8 @@ def chat(chatID):
             return Response("Success", status=200, mimetype='application/json')
 
     except Exception as e:
-        return Response("{'error':'{}'}".format(e), status=500, mimetype='application/json')
+        print(e)
+        return Response(str(e), status=500, mimetype='application/json')
 
 @socketio.on('message')
 def handle_message(msg): 
@@ -237,6 +247,22 @@ def matchmaking():
                 continue
 
     return Response(str(dict(session)), status=200, mimetype='application/json')
+
+@app.route('/get_profile', methods = ["GET"])
+def get_profile():
+    try:
+        if session.get("user"):
+            db_users = dict(users_db.order_by_child('username').equal_to(session.get("user")).get().items())
+            users = []
+            for k, v in db_users:
+                users.append(v)
+            return Response("{}".format(users), status=200, mimetype='application/json')
+        else:
+            Response("{'error':'Not signed in'}", status=401, mimetype='application/json')
+    
+    except Exception as e:
+        print(e)
+        return Response(str(e), status=500, mimetype='application/json')
 
 if __name__ == "__main__":
     socketio.run(app)
