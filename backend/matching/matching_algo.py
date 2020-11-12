@@ -18,8 +18,8 @@ def match_users(user, avail_users):
         # diff_polarity_scores = [abs(a-b) for a, b in zip(avail_user_polarity_scores, user_polarity_scores)]
         diff_subjectivity_scores = [abs(a-b) for a, b in zip(avail_user_subjectivity_scores, user_subjectivity_scores) if abs(a-b) < 0.35]
         # diff_subjectivity_scores = [abs(a-b) for a, b in zip(avail_user_subjectivity_scores, user_subjectivity_scores)]
-        print('diff_polarity_scores', diff_polarity_scores)
-        print('diff_subjectivity_scores', diff_subjectivity_scores)
+        # print('diff_polarity_scores', diff_polarity_scores)
+        # print('diff_subjectivity_scores', diff_subjectivity_scores)
         if len(diff_polarity_scores) < 3 or len(diff_subjectivity_scores) < 2:
             continue
         return avail_user_email
