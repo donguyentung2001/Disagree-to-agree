@@ -5,15 +5,14 @@ import './App.css';
 import 'antd/dist/antd.css';
 import './styles/_base.scss';
 import NavigationBar from './components/common/NavigationBar';
-// import Matching from './pages/Matching';
-import HomePage from './pages/HomePage';
+import Profile from './pages/Profile';
 
 function App() {
   return (
     <div className="App">
       <NavigationBar />
       <div style={{ marginTop: 100 }}>
-        <HomePage />
+        <Profile />
       </div>
     </div>
   );
