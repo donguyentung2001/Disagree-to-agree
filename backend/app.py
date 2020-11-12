@@ -115,6 +115,11 @@ def redirect_to_chat():
 
 @app.route('/chat/<chatID>', methods = ["GET", "POST"])
 def chat(chatID):
+    other_email=chatID.replace(session["user_email"],'')
+    other_username=users_db.order_by_child('email').equal_to(other_email).get().items()
+    for _, user in other_username:
+        otherusername=user['username']
+
     chat_ID=chat_db.child(chatID)
     if request.method == "POST":
         if request.json['msg'] == "!exit":
@@ -132,7 +137,7 @@ def chat(chatID):
         if str(chatID) != session["chatID"]:
             return "You do not have permission. Please return"
         else:
-            return render_template("chat.html",user=session['user'], chatID = chatID)
+            return render_template("chat.html",user=session['user'], chatID = chatID, otherusername=otherusername)
 
 @app.route('/chat/log/<chatID>', methods = ["GET", "POST"])
 def chat_log(chatID): 
