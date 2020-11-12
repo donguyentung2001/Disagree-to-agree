@@ -12,6 +12,7 @@
                 var chatID = '{{chatID}}';
     
                 socket.on('message', function(msg) {
+                    reduced_msg=msg.substr(msg.indexOf(":")+2)
                     if (msg=="!exit") {
                         $.ajax({
                             type : "POST",
@@ -26,7 +27,7 @@
                         setTimeout(function(){window.location.href = '/'}, 1000)
                     }
                     else {
-                        if (/\S/.test(msg)) {
+                        if (/\S/.test(reduced_msg)) {
                             $('#message-display').append('<div>' + msg + '<div>')
                         }
                     }
@@ -66,6 +67,26 @@
                         });
                 }
                 });
+                $("#message-input").keyup(function(event){ 
+                    if (event.keyCode == '13') {
+                        var message = $('#message-input').val()
+                        socket.send(username + ": " + $('#message-input').val());
+                        $('#message-input').val('');
+                        if (/\S/.test(message)) {
+                        
+                        $.ajax({
+                                type : "POST",
+                                url : "http://127.0.0.1:5000/chat/" + chatID,
+                                data: JSON.stringify({"msg": message}),
+                                dataType:"json",
+                                contentType: 'application/json;charset=UTF-8',
+                                success: function() {
+                                    console.log("Success")
+                                }
+                            });
+                    }
+                }
+                })
                 $("#exit").on('click',function() {
                     socket.send("!exit")
                 })
@@ -78,5 +99,6 @@
         <input type="text" id="message-input" hidden>
         <button id="sendbutt" hidden> Send </button>
         <button id="exit" hidden> Exit </button>
+        <div id="chatbot"> </div>
     </body>
 </html>
