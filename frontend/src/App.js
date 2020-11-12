@@ -5,14 +5,14 @@ import './App.css';
 import 'antd/dist/antd.css';
 import './styles/_base.scss';
 import NavigationBar from './components/common/NavigationBar';
-import Chat from './pages/Chat';
+import Profile from './pages/Profile';
 
 function App() {
   return (
     <div className="App">
       <NavigationBar />
       <div style={{ marginTop: 100 }}>
-        <Chat />
+        <Profile />
       </div>
     </div>
   );
