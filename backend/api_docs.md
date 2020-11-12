@@ -129,3 +129,59 @@ output:
 - Once match: It will return a dictionary of the session, including the chatID.
 
 - If there hasn't been a match, the program keeps on running.
+
+### /bot_casual [GET]
+
+return a random casual question
+
+input: None 
+
+output:
+    - a casual question
+
+    - error if there is error
+
+### /bot_economics [GET]
+
+return a random economics question
+
+input: None 
+
+output:
+    - an economics  question
+
+    - error if there is error
+
+### /bot_immigration [GET]
+
+return a random immigration question
+
+input: None 
+
+output:
+    - an immigration question
+
+    - error if there is error
+
+### /bot_healthcare [GET]
+
+return a random healthcare question
+
+input: None 
+
+output:
+    - a healthcare question
+
+    - error if there is error
+
+### /bot_education [GET]
+
+return a random education question
+
+input: None 
+
+output:
+    - an education question
+
+    - error if there is error
+
