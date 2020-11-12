@@ -54,13 +54,10 @@ def matchmaking():
     avail_user = match_db.get()
     waiting_already = False
     if avail_user != None:
-        # avail_user = avail_user.items()
         for uid, user_profile in avail_user.items():
             if str(session["user_email"]) == str(list(user_profile.keys())[0]):
                 waiting_already = True
-                # TODO should we disable the match button so that they cannot click again?
     if avail_user != None and not waiting_already:
-        # avail_user = avail_user.items()
         compatible_user = matching_algo.match_users([session["user_email"], users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()], [v for k, v in avail_user.items()])
         # compatible user is the email for the other user
         if compatible_user is not None:
@@ -68,9 +65,6 @@ def matchmaking():
             session["chatID"] = chatID
             compatible_user_node = [v for k,v in match_db.get().items() if v['email'] == compatible_user][0]
             match_db.child(compatible_user_node['match_key']).set({'matched': chatID})
-            # match_db.child(compatible_user).update(
-            #     {"matched": chatID}
-            # )
             return redirect("/chat")
         else:
             user_details = users_db.order_by_child('email').equal_to(session['user_email']).limit_to_first(1).get().items()
@@ -225,7 +219,6 @@ def logout():
     session.pop('user_email', None)
     if 'credentials' in session:
         del session['credentials']
-        #TODO remove users from match database
     return redirect('/')
 
 if __name__ == "__main__":
