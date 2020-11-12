@@ -1,19 +1,43 @@
 @import "src/styles/_base";
 @import "src/styles/_mixins";
 
-#login-option-change-panel {
+.login-input-panel {
+  flex-direction: column;
+}
+
+.login-input-panel > span {
+  width: 70%;
+  margin-bottom: 10px;
+}
+
+.login-input-panel > span:hover,  .login-input-panel > span:focus {
+  border-color: $black-secondary;
+}
+
+.login-input-panel > span:focus {
+  box-shadow: $box-shadow !important;
+}
+
+::selection {
+  background: $black;
+}
+
+.login-option-change-panel {
   background: $black;
   flex-direction: column;
+}
+
+.login-option-change-panel > h1 {
   color: $white;
 }
 
-#login-option-change-panel > button {
+.login-option-change-panel > button, .login-option-change-panel > button:hover {
   color: $black;
   background: $white;
   border-color: $white;
   box-shadow: none;
 }
 
-#login-option-change-panel > button:hover {
-  @include scale(1.1);
+.login-option-change-panel > button:hover {
+  @include scale(1.2);
 }

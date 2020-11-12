@@ -5,7 +5,7 @@ const LogInOptionChangePanel = ({
   message, optionChange, setOption,
 }) => (
   <>
-    <div>{message}</div>
+    <h1>{message}</h1>
     <Button type="primary" size="large" onClick={setOption}>{optionChange}</Button>
   </>
 );

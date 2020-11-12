@@ -21,14 +21,14 @@ const LogIn = () => {
       {isSignIn
         ? (
           <>
-            <Col span={16}>
+            <Col span={14} className="login-input-panel">
               <LogInInputPanel
                 title="Sign In"
                 fieldName={['username', 'password']}
                 logo={[<UserOutlined />, <LockOutlined />]}
               />
             </Col>
-            <Col span={8} id="login-option-change-panel" className="full-height d-fl">
+            <Col span={10} className="login-option-change-panel full-height d-fl">
               <LogInOptionChangePanel
                 message="Hello, Friend!"
                 optionChange="Sign Up"
@@ -39,14 +39,14 @@ const LogIn = () => {
         )
         : (
           <>
-            <Col span={8}>
+            <Col span={10} className="login-option-change-panel full-height d-fl">
               <LogInOptionChangePanel
                 message="Welcome back!"
                 optionChange="Sign In"
                 setOption={setOption}
               />
             </Col>
-            <Col span={16}>
+            <Col span={14} className="login-input-panel">
               <LogInInputPanel
                 title="Create Account"
                 fieldName={['username', 'email', 'password']}
