@@ -1,0 +1,78 @@
+@import "src/styles/_base";
+@import "src/styles/_mixins";
+
+.login-input-panel {
+  flex-direction: column;
+}
+
+.login-input-panel .ant-input-affix-wrapper {
+  width: 70%;
+}
+
+.login-input-panel .ant-input-affix-wrapper:hover,
+.login-input-panel .ant-input-affix-wrapper:focus {
+  border-color: $black-secondary;
+}
+
+.login-input-panel .ant-input-affix-wrapper:focus {
+  box-shadow: $box-shadow !important;
+}
+
+.login-input-panel button, .login-input-panel button:hover, .login-input-panel button:active {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  color: $white;
+  background: $black;
+  border-color: $black;
+  box-shadow: none;
+  margin-top: 10px;
+}
+
+.login-input-panel button:hover {
+  @include scale(1.1);
+}
+
+::selection {
+  background: $black;
+}
+
+.login-option-change-panel {
+  background: $black;
+  flex-direction: column;
+}
+
+.login-option-change-panel > h1 {
+  color: $white;
+}
+
+.login-option-change-panel button, .login-option-change-panel button:hover {
+  color: $black;
+  background: $white;
+  border-color: $white;
+  box-shadow: none;
+}
+
+.login-option-change-panel button:hover {
+  @include scale(1.1);
+}
+
+.login-form-forgot {
+  width: 70%;
+  text-align: right;
+  margin-top: -37px;
+  margin-bottom: 0;
+  margin-left: 15%;
+  font-size: $secondary-size;
+  cursor: pointer;
+}
+
+.ant-form-item-explain-error {
+  width: 70%;
+  margin-left: 15%;
+  text-align: left;
+}
+
+.ant-row:nth-child(5) .ant-form-item-explain-error {
+  text-align: center !important;
+}
