@@ -5,20 +5,20 @@
   flex-direction: column;
 }
 
-.login-input-panel > span {
+.login-input-panel .ant-input-affix-wrapper {
   width: 70%;
-  margin-bottom: 15px;
 }
 
-.login-input-panel > span:hover,  .login-input-panel > span:focus {
+.login-input-panel .ant-input-affix-wrapper:hover,
+.login-input-panel .ant-input-affix-wrapper:focus {
   border-color: $black-secondary;
 }
 
-.login-input-panel > span:focus {
+.login-input-panel .ant-input-affix-wrapper:focus {
   box-shadow: $box-shadow !important;
 }
 
-.login-input-panel > button, .login-input-panel > button:hover {
+.login-input-panel button, .login-input-panel button:hover, .login-input-panel button:active {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -29,7 +29,7 @@
   margin-top: 10px;
 }
 
-.login-input-panel > button:hover {
+.login-input-panel button:hover {
   @include scale(1.1);
 }
 
@@ -46,22 +46,33 @@
   color: $white;
 }
 
-.login-option-change-panel > button, .login-option-change-panel > button:hover {
+.login-option-change-panel button, .login-option-change-panel button:hover {
   color: $black;
   background: $white;
   border-color: $white;
   box-shadow: none;
 }
 
-.login-option-change-panel > button:hover {
+.login-option-change-panel button:hover {
   @include scale(1.1);
 }
 
-.forgot-password {
+.login-form-forgot {
   width: 70%;
   text-align: right;
-  margin-top: -10px;
+  margin-top: -37px;
+  margin-bottom: 0;
   margin-left: 15%;
   font-size: $secondary-size;
   cursor: pointer;
+}
+
+.ant-form-item-explain-error {
+  width: 70%;
+  margin-left: 15%;
+  text-align: left;
+}
+
+.ant-row:nth-child(5) .ant-form-item-explain-error {
+  text-align: center !important;
 }

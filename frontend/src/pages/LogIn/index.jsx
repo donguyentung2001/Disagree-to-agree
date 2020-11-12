@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import {
-  MailOutlined,
-  UserOutlined,
-  LockOutlined,
-} from '@ant-design/icons';
 import { Col, Row } from 'antd';
-import LogInInputPanel from '../../components/login/LogInInputPanel';
+import SignIn from '../../components/login/SignIn';
+import SignUp from '../../components/login/SignUp';
 import LogInOptionChangePanel from '../../components/login/LogInOptionChangePanel';
 import './index.scss';
 
@@ -21,12 +17,8 @@ const LogIn = () => {
       {isSignIn
         ? (
           <>
-            <Col span={14} className="login-input-panel">
-              <LogInInputPanel
-                title="Sign In"
-                fieldName={['username', 'password']}
-                logo={[<UserOutlined />, <LockOutlined />]}
-              />
+            <Col id="signin" span={14} className="login-input-panel">
+              <SignIn />
             </Col>
             <Col span={10} className="login-option-change-panel full-height d-fl">
               <LogInOptionChangePanel
@@ -46,12 +38,8 @@ const LogIn = () => {
                 setOption={setOption}
               />
             </Col>
-            <Col span={14} className="login-input-panel">
-              <LogInInputPanel
-                title="Create Account"
-                fieldName={['username', 'email', 'password']}
-                logo={[<UserOutlined />, <MailOutlined />, <LockOutlined />]}
-              />
+            <Col id="signup" span={14} className="login-input-panel">
+              <SignUp />
             </Col>
           </>
         )}
