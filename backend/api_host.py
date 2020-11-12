@@ -258,7 +258,7 @@ def get_profile():
                 users.append(v)
             return Response("{}".format(users), status=200, mimetype='application/json')
         else:
-            Response("{'error':'Not signed in'}", status=401, mimetype='application/json')
+            return Response("{'error':'Not signed in'}", status=401, mimetype='application/json')
     
     except Exception as e:
         print(e)
