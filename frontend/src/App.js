@@ -4,15 +4,15 @@ import './App.css';
 // import LogIn from './pages/LogIn';
 import 'antd/dist/antd.css';
 import './styles/_base.scss';
-import Questionaire from './pages/Questionaire';
 import NavigationBar from './components/common/NavigationBar';
+import Matching from './pages/Matching';
 
 function App() {
   return (
     <div className="App">
       <NavigationBar />
       <div style={{ marginTop: 100 }}>
-        <Questionaire />
+        <Matching />
       </div>
     </div>
   );
