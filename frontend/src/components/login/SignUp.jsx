@@ -1,6 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable prefer-promise-reject-errors */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import {
   Form,
