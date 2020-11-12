@@ -3,9 +3,19 @@ $black-secondary: #404040;
 $white-secondary: #bfbfbf;
 $white: #fff;
 $box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-$heading-size: 2rem;
+$heading-size: 1.1rem;
 $primary-size: 1rem;
 $secondary-size: 0.7rem;
+
+.black-box {
+  background: $black !important;
+  color: $white !important;
+}
+
+.white-box {
+  background: $white !important;
+  color: $black !important;
+}
 
 .full-height {
   height: 100%;
@@ -24,4 +34,23 @@ $secondary-size: 0.7rem;
 .ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused {
   border-color: $black-secondary !important;
   box-shadow: $box-shadow !important;
+}
+
+.ant-btn:hover, .ant-btn:focus, .ant-input:hover, .ant-input:focus {
+  color: $black;
+  border-color: $black;
+  box-shadow: $box-shadow !important;
+}
+
+label {
+  background-color: $white !important;
+  border-color: $white-secondary !important;
+  color: $black-secondary !important;
+}
+
+label:active, label:focus, .ant-radio-button-wrapper-checked {
+  background-color: $black-secondary !important;
+  border-color: $black-secondary !important;
+  color: $white !important;
+  box-shadow: $box-shadow;
 }

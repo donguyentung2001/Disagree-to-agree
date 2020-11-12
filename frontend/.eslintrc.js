@@ -22,5 +22,6 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     'linebreak-style': 0,
     'react/prop-types': 0,
+    'jsx-a11y/anchor-is-valid': 0,
   },
 };
