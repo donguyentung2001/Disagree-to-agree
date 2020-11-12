@@ -1,0 +1,18 @@
+$black: #000;
+$black-secondary: #404040;
+$white-secondary: #bfbfbf;
+$white: #fff;
+
+.full-height {
+  height: 100%;
+}
+
+.d-fl {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ant-input:placeholder-shown {
+  text-transform: capitalize;
+}

@@ -1,0 +1,19 @@
+@import "src/styles/_base";
+@import "src/styles/_mixins";
+
+#login-option-change-panel {
+  background: $black;
+  flex-direction: column;
+  color: $white;
+}
+
+#login-option-change-panel > button {
+  color: $black;
+  background: $white;
+  border-color: $white;
+  box-shadow: none;
+}
+
+#login-option-change-panel > button:hover {
+  @include scale(1.1);
+}
