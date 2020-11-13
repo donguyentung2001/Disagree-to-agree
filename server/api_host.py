@@ -84,8 +84,9 @@ def logout():
 def signin():
     try:
         if request.method == "POST":
-            _email = request.data["email"]
-            _password = request.data["password"]
+            request_data=json.loads(request.data.decode())
+            _email = request_data["email"]
+            _password = request_data["password"]
             user = users_db.order_by_child('email').equal_to(_email).get().items()
             if len(user) > 1:
                 return Response("{'error':'Internal Database Error (more than one user detected). Contact Trung so he can delete the record from the database.'}", status=500, mimetype='application/json')
@@ -111,21 +112,22 @@ def signin():
 @cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def register():
     try:
-        _username = request.data["username"]
-        _email = request.data["email"]
-        _password = request.data["password"]
-        _party = request.data["party"]
-        _avatar = request.data["avatar"]
-        _interest = request.data["interest"]
+        request_data=json.loads(request.data.decode())
+        _username = request_data['username']
+        _email = request_data["email"]
+        _password = request_data["password"]
+        _party =request_data["party"]
+        _avatar = request_data["avatar"]
+        _interest = request_data["interest"]
         _interest = _interest.split(",")
         _message = []
         _message_polarity = []
         _message_subjectivity = []
-        for key in request.data.keys():
+        for key in request_data:
             if key[0:7] == "message":
-                _message.append(request.data[key])
-                _message_polarity.append(sentiment_analysis.analyze_google_sentiment(request.data[key]))
-                _message_subjectivity.append(sentiment_analysis.find_sentiments(request.data[key]))
+                _message.append(request_data[key])
+                _message_polarity.append(sentiment_analysis.analyze_google_sentiment(request_data[key]))
+                _message_subjectivity.append(sentiment_analysis.find_sentiments(request_data[key]))
         if _password:
             _hashed_password = generate_password_hash(_password)
         user = users_db.order_by_child('email').equal_to(_email).get().items()
