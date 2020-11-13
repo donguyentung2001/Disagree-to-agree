@@ -8,6 +8,7 @@ export default {
       })
       .then((res) => {
         const { data } = res;
+        console.log(data);
         if (data.logged_in) {
           localStorage.setItem('user', JSON.stringify(data));
           if (['/signin', '/signup'].includes(pathname)) history.push('/');

@@ -2,7 +2,9 @@ import {
   Radio, Form, Input, Button,
 } from 'antd';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import Axios from 'axios';
+// import api from '../../utils/api';
 
 import './index.scss';
 
@@ -18,13 +20,29 @@ const layout = {
 
 const Questionaire = () => {
   const [option, setOption] = useState('republican');
-
+  const history = useHistory();
+  // const { pathname } = useLocation();
   const setIdentity = (e) => {
     setOption(e.target.value);
   };
 
-  const onFinish = (values) => {
-    console.log(values);
+  const onFinish = () => {
+    // api.checkLoggedIn(history, pathname);
+    Axios.post('http://localhost:5000/login',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        data: {
+          email: 'trump',
+          password: 'trump',
+        },
+      })
+      .then((res) => {
+        const { data } = res;
+        localStorage.setItem('user', JSON.stringify(data));
+        history.push('/');
+      }).catch((err) => {
+        console.log(err);
+      });
   };
 
   return (

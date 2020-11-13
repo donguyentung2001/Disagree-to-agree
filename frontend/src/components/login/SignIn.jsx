@@ -35,7 +35,7 @@ const SignIn = () => {
           notification.openNotification('Server Error', 'Cannot Sign In');
         } else {
           console.log(data);
-          localStorage.setItem('user', JSON.st(data));
+          localStorage.setItem('user', JSON.stringify(data));
           history.push('/');
         }
       }).catch((err) => {
