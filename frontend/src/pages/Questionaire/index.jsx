@@ -2,6 +2,7 @@ import {
   Radio, Form, Input, Button,
 } from 'antd';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import './index.scss';
 
@@ -27,7 +28,7 @@ const Questionaire = () => {
   };
 
   return (
-    <>
+    <div id="questionaire">
       <h1>Tell us a little bit about you!</h1>
       <Form
         {...layout}
@@ -80,22 +81,24 @@ const Questionaire = () => {
         </Form.Item>
         <Form.Item
           name="education"
-          label="Should education be free??"
+          label="Should education be free?"
         >
           <Input.TextArea />
         </Form.Item>
         <Form.Item wrapperCol={{ span: 24 }}>
           <div className="encourage-message">Yay, you finished it!</div>
-          <Button
-            size="large"
-            htmlType="submit"
-            className="black-box"
-          >
-            Submit
-          </Button>
+          <Link to="/">
+            <Button
+              size="large"
+              htmlType="submit"
+              className="black-box"
+            >
+              Submit
+            </Button>
+          </Link>
         </Form.Item>
       </Form>
-    </>
+    </div>
   );
 };
 

@@ -36,11 +36,11 @@ $secondary-size: 0.7rem;
   box-shadow: $box-shadow !important;
 }
 
-.ant-btn:hover, .ant-btn:focus, .ant-input:hover, .ant-input:focus {
+.ant-btn:hover, .ant-btn:focus, .ant-input:hover, .ant-input:focus, .ant-btn:active {
   color: $black;
   border-color: $black;
-  box-shadow: $box-shadow !important;
 }
+
 
 label {
   background-color: $white !important;

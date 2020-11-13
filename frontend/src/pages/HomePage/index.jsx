@@ -1,5 +1,6 @@
 import { Button } from 'antd';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './index.scss';
 
 const HomePage = () => {
@@ -14,7 +15,9 @@ const HomePage = () => {
         {name}
       </h1>
       <h3>How are you feeling today? Wanna find a match?</h3>
-      <Button className="black-box" size="large">Join the journey</Button>
+      <Link to="/matching">
+        <Button className="black-box" size="large">Join the journey</Button>
+      </Link>
     </div>
   );
 };

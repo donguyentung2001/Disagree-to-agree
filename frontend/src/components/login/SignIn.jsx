@@ -3,6 +3,7 @@ import {
   Form, Input, Button,
 } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 const SignIn = () => {
   const onFinish = (values) => {
@@ -46,9 +47,11 @@ const SignIn = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button size="large" htmlType="submit">
-            Log in
-          </Button>
+          <Link to="/">
+            <Button size="large" htmlType="submit">
+              Log in
+            </Button>
+          </Link>
         </Form.Item>
       </Form>
     </>
