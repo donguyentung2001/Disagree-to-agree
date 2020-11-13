@@ -3,11 +3,34 @@ import {
   Form, Input, Button,
 } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import Axios from 'axios';
+import { useHistory, useLocation } from 'react-router-dom';
+import API from '../../utils/api';
 
 const SignIn = () => {
+  // const [error, setError] = useState({});
+  const history = useHistory();
+  const { pathname } = useLocation();
+
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    API.checkLoggedIn(history, pathname);
+    Axios.post('http://localhost:5000/login',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({
+          email: values.username,
+          password: values.password,
+        }),
+      })
+      .then((res) => {
+        history.push('/');
+        if (res.error) {
+          // setError(res.error);
+        }
+      }).catch((err) => {
+        history.push('/');
+        console.log(err);
+      });
   };
 
   return (
@@ -21,7 +44,13 @@ const SignIn = () => {
       >
         <Form.Item
           name="username"
-          rules={[{ required: true, message: 'Please input your Username!' }]}
+          rules={
+            [{
+              required: true,
+              message: 'Please input your username!',
+            },
+            ]
+          }
         >
           <Input
             size="large"
@@ -31,7 +60,7 @@ const SignIn = () => {
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your Password!' }]}
+          rules={[{ required: true, message: 'Please input your password!' }]}
         >
           <Input
             size="large"
@@ -47,11 +76,9 @@ const SignIn = () => {
         </Form.Item>
 
         <Form.Item>
-          <Link to="/">
-            <Button size="large" htmlType="submit">
-              Log in
-            </Button>
-          </Link>
+          <Button size="large" htmlType="submit">
+            Log in
+          </Button>
         </Form.Item>
       </Form>
     </>

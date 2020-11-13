@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
-import { Dropdown, Menu } from 'antd';
+import { Dropdown, Menu, notification } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
+import Axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './common.scss';
@@ -18,10 +19,32 @@ const NavigationBar = () => {
     setVisible(true);
   };
 
+  const openNotification = () => {
+    notification.open({
+      message: 'Notification Title',
+      description:
+        'Cannot logout.',
+    });
+  };
+
+  const logout = () => {
+    Axios.post('http://localhost:5000/logout',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      })
+      .then((res) => {
+        if (res.body !== 'Success') {
+          openNotification();
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+  };
+
   const menu = (
     <Menu onClick={handleCloseSubMenu}>
       <Menu.Item key="1"><Link to="/profile/1">Profile</Link></Menu.Item>
-      <Menu.Item key="2"><Link to="/signin">Logout</Link></Menu.Item>
+      <Menu.Item key="2" onClick={logout}><Link to="/signin">Logout</Link></Menu.Item>
     </Menu>
   );
 

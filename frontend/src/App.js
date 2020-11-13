@@ -13,36 +13,38 @@ import Questionaire from './pages/Questionaire';
 import Matching from './pages/Matching';
 import Chat from './pages/Chat';
 
-const App = () => (
-  <Router>
-    <div className="App">
-      <Switch>
-        <Route path="/signin"><LogIn /></Route>
-        <Route path="/signup"><LogIn /></Route>
-        <Route path="/profile/:userId">
-          <NavigationBar />
-          <Profile />
-        </Route>
-        <Route path="/questionaire">
-          <NavigationBar />
-          <Questionaire />
-        </Route>
-        <Route path="/matching">
-          <NavigationBar />
-          <Matching />
-        </Route>
-        <Route path="/chat/:chatId">
-          <NavigationBar />
-          <Chat />
-        </Route>
-        <Route path="/">
-          <NavigationBar />
-          <HomePage />
-        </Route>
-      </Switch>
-    </div>
-  </Router>
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route path="/signin"><LogIn /></Route>
+          <Route path="/signup"><LogIn /></Route>
+          <Route path="/profile/:userId">
+            <NavigationBar />
+            <Profile />
+          </Route>
+          <Route path="/questionaire">
+            <NavigationBar />
+            <Questionaire />
+          </Route>
+          <Route path="/matching">
+            <NavigationBar />
+            <Matching />
+          </Route>
+          <Route path="/chat/:chatId">
+            <NavigationBar />
+            <Chat />
+          </Route>
+          <Route path="/">
+            <NavigationBar />
+            <HomePage />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
 
-);
+  );
+}
 
 export default App;

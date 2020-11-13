@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Form,
   Input,
@@ -9,12 +9,26 @@ import {
   LockOutlined, MailOutlined, RetweetOutlined, UserOutlined,
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import Axios from 'axios';
 
 const SignUp = () => {
   const [form] = Form.useForm();
+  const [error, setError] = useState({});
 
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    Axios.post('http://localhost:5000/register',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        values,
+      })
+      .then((res) => {
+        if (res.error) {
+          setError(res.error);
+        }
+      }).catch((err) => {
+        console.log(err);
+        console.log(error);
+      });
   };
 
   return (

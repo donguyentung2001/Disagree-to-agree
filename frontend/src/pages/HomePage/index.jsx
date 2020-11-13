@@ -1,11 +1,20 @@
 import { Button } from 'antd';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import {
+  Link, useHistory, useLocation, withRouter,
+} from 'react-router-dom';
+import API from '../../utils/api';
 import './index.scss';
 
 const HomePage = () => {
   // eslint-disable-next-line no-unused-vars
   const [name, setName] = useState('Linh');
+  const history = useHistory();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    API.checkLoggedIn(history, pathname);
+  });
 
   return (
     <div id="homepage-body">
@@ -22,4 +31,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default withRouter(HomePage);
