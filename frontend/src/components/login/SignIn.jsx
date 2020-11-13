@@ -9,7 +9,6 @@ import API from '../../utils/api';
 import notification from '../../utils/notification';
 
 const SignIn = () => {
-  // eslint-disable-next-line no-unused-vars
   const [emailError, setEmailError] = useState('');
   const [passError, setPassError] = useState('');
   const history = useHistory();
@@ -35,6 +34,8 @@ const SignIn = () => {
           notification.openNotification('Server Error', 'Cannot Sign In');
         } else {
           localStorage.setItem('user', JSON.stringify(data));
+          setEmailError('');
+          setPassError('');
           history.push('/');
         }
       }).catch((err) => {

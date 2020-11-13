@@ -5,12 +5,14 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, Link } from 'react-router-dom';
 import ChatItem from '../../components/chat/ChatItem';
 import api from '../../utils/api';
+import notification from '../../utils/notification';
 
 import './index.scss';
 
 const Chat = () => {
 // const [name, setName] = useState('Biden');
   const [chatId, setChatId] = useState();
+  const [chatInput, setChatInput] = useState('');
   const [chat, setChat] = useState([
     { user: 'trump', message: 'Hi friend' },
     { user: 'bernie', message: 'Hello' },
@@ -27,6 +29,30 @@ const Chat = () => {
   ]);
   const history = useHistory();
   const { pathname } = useLocation();
+
+  const handleEnterChat = () => {
+    Axios.post(`http://localhost:5000/chat/${chatId}`,
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        data: {
+          msg: chatInput,
+        },
+      })
+      .then((res) => {
+        const { data } = res;
+        if (data.status_code === 404) notification.openNotification('Not Found', data.error);
+        if (data.status_code === 500) notification.openNotification('Server Error', data.error);
+        else setChatInput('');
+      }).catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleEnterChat();
+    }
+  };
 
   useEffect(() => {
     api.checkLoggedIn(history, pathname);
@@ -53,7 +79,7 @@ const Chat = () => {
       }).catch((err) => {
         console.log(err);
       });
-  });
+  }, []);
   return (
     <div id="chat-body">
       <div id="chat-header">
@@ -68,8 +94,9 @@ const Chat = () => {
         {chat.map((item, i) => <ChatItem user={item.user} message={item.message} key={`chat-${i}`} />)}
       </div>
       <Input
+        value={chatInput}
         suffix={(
-          <SendOutlined />
+          <SendOutlined onKeyDown={handleKeyDown} />
       )}
       />
     </div>

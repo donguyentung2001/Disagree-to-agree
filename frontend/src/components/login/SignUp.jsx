@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Form,
   Input,
@@ -8,14 +8,42 @@ import {
 import {
   LockOutlined, MailOutlined, RetweetOutlined, UserOutlined,
 } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import Axios from 'axios';
+import notification from '../../utils/notification';
 
 const SignUp = () => {
   const [form] = Form.useForm();
-  // const [error, setError] = useState({});
+  const history = useHistory();
+  const [emailError, setEmailError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
 
-  const onFinish = () => {
-    console.log(1);
+  const onFinish = (values) => {
+    const formData = {
+      username: values.username,
+      email: values.email,
+      password: values.password,
+    };
+    Axios.post('http://localhost:5000/pre_register',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        data: formData,
+      })
+      .then((res) => {
+        const { data } = res;
+        if (data.status_code === 409) {
+          if (data.error[0] === 'E') setEmailError(data.error);
+          else setUsernameError(data.error);
+        } else if (data.status_code === 500) {
+          notification.openNotification('Server Error', 'Cannot go to next page');
+        } else {
+          setEmailError('');
+          setUsernameError('');
+          history.push('/questionaire', [formData]);
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -35,6 +63,12 @@ const SignUp = () => {
               required: true,
               message: 'Please input your username!',
             },
+            () => ({
+              validator() {
+                if (usernameError) return Promise.reject(usernameError);
+                return Promise.resolve();
+              },
+            }),
           ]}
         >
           <Input
@@ -55,6 +89,12 @@ const SignUp = () => {
               required: true,
               message: 'Please input your email!',
             },
+            () => ({
+              validator() {
+                if (emailError) return Promise.reject(emailError);
+                return Promise.resolve();
+              },
+            }),
           ]}
         >
           <Input
@@ -124,11 +164,9 @@ const SignUp = () => {
           </Checkbox>
         </Form.Item>
         <Form.Item>
-          <Link to="/questionaire">
-            <Button size="large" type="primary" htmlType="submit">
-              Next
-            </Button>
-          </Link>
+          <Button size="large" type="primary" htmlType="submit">
+            Next
+          </Button>
         </Form.Item>
       </Form>
     </>

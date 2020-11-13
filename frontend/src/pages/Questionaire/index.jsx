@@ -2,11 +2,12 @@ import {
   Radio, Form, Input, Button,
 } from 'antd';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Axios from 'axios';
-// import api from '../../utils/api';
+import api from '../../utils/api';
 
 import './index.scss';
+import notification from '../../utils/notification';
 
 const options = [
   { label: 'Republican', value: 'republican' },
@@ -21,25 +22,38 @@ const layout = {
 const Questionaire = () => {
   const [option, setOption] = useState('republican');
   const history = useHistory();
-  // const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const setIdentity = (e) => {
     setOption(e.target.value);
   };
 
-  const onFinish = () => {
-    // api.checkLoggedIn(history, pathname);
-    Axios.post('http://localhost:5000/login',
+  const onFinish = (values) => {
+    const formData = state[0];
+    console.log(formData);
+    api.checkLoggedIn(history, pathname);
+    Axios.post('http://localhost:5000/register',
       {
-        headers: { 'Access-Control-Allow-Origin': '*' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*' },
         data: {
-          email: 'trump',
-          password: 'trump',
+          ...formData,
+          party: values.identity,
+          interest: values.interest,
+          message: [
+            values.healthcare,
+            values.income,
+            values.immigrant,
+            values.tax,
+            values.education,
+          ],
         },
       })
       .then((res) => {
         const { data } = res;
-        console.log(data);
-        localStorage.setItem('user', JSON.stringify(data));
+        if (data.status_code === 500) {
+          notification.openNotification('Server Error', 'Cannot Sign In');
+        }
         history.push('/');
       }).catch((err) => {
         console.log(err);
