@@ -1,5 +1,6 @@
 import { Button } from 'antd';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './index.scss';
 
 const Chat = () => {
@@ -12,7 +13,9 @@ const Chat = () => {
         <h2>
           {name}
         </h2>
-        <Button type="danger" size="large">Leave</Button>
+        <Link to="/">
+          <Button type="danger" size="large">Leave</Button>
+        </Link>
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ import {
 import {
   LockOutlined, MailOutlined, RetweetOutlined, UserOutlined,
 } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
   const [form] = Form.useForm();
@@ -122,9 +123,11 @@ const SignUp = () => {
           </Checkbox>
         </Form.Item>
         <Form.Item>
-          <Button size="large" type="primary" htmlType="submit">
-            Register
-          </Button>
+          <Link to="/questionaire">
+            <Button size="large" type="primary" htmlType="submit">
+              Next
+            </Button>
+          </Link>
         </Form.Item>
       </Form>
     </>
