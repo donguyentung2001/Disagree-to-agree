@@ -1,6 +1,10 @@
 @import "src/styles/_base";
 @import "src/styles/_mixins";
 
+h1 {
+  margin-bottom: 20px;
+}
+
 .login-input-panel {
   flex-direction: column;
 }

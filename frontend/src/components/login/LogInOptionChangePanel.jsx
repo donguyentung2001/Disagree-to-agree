@@ -1,12 +1,15 @@
 import { Button } from 'antd';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const LogInOptionChangePanel = ({
-  message, optionChange, setOption,
+  message, optionChange, pathname,
 }) => (
   <>
     <h1>{message}</h1>
-    <Button type="primary" size="large" onClick={setOption}>{optionChange}</Button>
+    <Link to={pathname === '/signin' ? '/signup' : '/signin'}>
+      <Button size="large">{optionChange}</Button>
+    </Link>
   </>
 );
 

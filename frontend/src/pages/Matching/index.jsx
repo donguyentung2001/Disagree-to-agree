@@ -1,13 +1,14 @@
 /* eslint-disable no-unused-vars */
 import { Button } from 'antd';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './index.scss';
 
 const Matching = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <>
+    <div id="matching">
       {isLoading
         ? (
           <div>
@@ -29,10 +30,13 @@ const Matching = () => {
               className="avatar"
               alt="avatar"
             />
-            <Button size="large" className="black-box">Join Conversation</Button>
+            <Link to="/chat/1">
+              <Button size="large" className="black-box">Join Conversation</Button>
+            </Link>
+
           </div>
         )}
-    </>
+    </div>
   );
 };
 

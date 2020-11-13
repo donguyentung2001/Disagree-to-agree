@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Col, Row } from 'antd';
+import { useLocation } from 'react-router-dom';
 import SignIn from '../../components/login/SignIn';
 import SignUp from '../../components/login/SignUp';
 import LogInOptionChangePanel from '../../components/login/LogInOptionChangePanel';
 import './index.scss';
 
 const LogIn = () => {
-  const [isSignIn, setIsSignIn] = useState(true);
-
-  const setOption = () => {
-    setIsSignIn(!isSignIn);
-  };
+  const { pathname } = useLocation();
 
   return (
     <Row align="middle" justify="center" gutter={[10, 0]} className="full-height">
-      {isSignIn
+      {pathname === '/signin'
         ? (
           <>
             <Col id="signin" span={14} className="login-input-panel">
@@ -24,7 +21,7 @@ const LogIn = () => {
               <LogInOptionChangePanel
                 message="Hello, Friend!"
                 optionChange="Sign Up"
-                setOption={setOption}
+                pathname={pathname}
               />
             </Col>
           </>
@@ -35,7 +32,7 @@ const LogIn = () => {
               <LogInOptionChangePanel
                 message="Welcome back!"
                 optionChange="Sign In"
-                setOption={setOption}
+                pathname={pathname}
               />
             </Col>
             <Col id="signup" span={14} className="login-input-panel">

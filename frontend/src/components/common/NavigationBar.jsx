@@ -4,6 +4,7 @@ import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import { Dropdown, Menu } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './common.scss';
 
 const NavigationBar = () => {
@@ -19,8 +20,8 @@ const NavigationBar = () => {
 
   const menu = (
     <Menu onClick={handleCloseSubMenu}>
-      <Menu.Item key="1">Profile</Menu.Item>
-      <Menu.Item key="2">Logout</Menu.Item>
+      <Menu.Item key="1"><Link to="/profile/1">Profile</Link></Menu.Item>
+      <Menu.Item key="2"><Link to="/signin">Logout</Link></Menu.Item>
     </Menu>
   );
 
@@ -29,7 +30,9 @@ const NavigationBar = () => {
       position: 'fixed', zIndex: 2, width: '100%', background: '#000', display: 'flex',
     }}
     >
-      <div className="logo">Disagree To Agree</div>
+      <Link to="/">
+        <div className="logo">Disagree To Agree</div>
+      </Link>
       <Menu mode="horizontal">
         <Menu.Item key="1" style={{ display: 'block', textAlign: 'right' }}>
           <Dropdown

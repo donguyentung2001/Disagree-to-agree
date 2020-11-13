@@ -1,10 +1,14 @@
 #chat-body {
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-top: -20px;
+  padding-left: 50px;
+  padding-right: 50px;
+  margin-top: 80px;
 }
 
 #chat-header {
   display: flex;
   justify-content: space-between;
+}
+
+#chat-header button {
+  text-align: left;
 }
