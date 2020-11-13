@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, R
 from flask.wrappers import Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import SocketIO, send
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 # database
 import firebase_admin
@@ -24,8 +24,9 @@ from matching import matching_algo
 #app setup
 app = Flask(__name__)
 app.secret_key = 'development key'
+app.config['CORS_HEADERS'] = 'Content-Type'
 
-CORS(app)
+cors = CORS(app, resources={r"/foo": {"origins": "http://127.0.0.1:5000"}})
 
 # database set up
 cred = credentials.Certificate("database/firebase_key.json")
@@ -46,6 +47,7 @@ socketio=SocketIO(app)
 
 # if the user is loggedin
 @app.route('/loggedin', methods = ["GET"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def loggedIn():
     if session.get("user"):
         return Response(str(dict(session)), status=200, mimetype='application/json')
@@ -54,6 +56,7 @@ def loggedIn():
 
 # logging the user out
 @app.route('/logout', methods = ["POST"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def logout():
     try:
         # delete user from matchmaking database
@@ -77,6 +80,7 @@ def logout():
 
 #sign the user in
 @app.route('/login', methods = ["POST"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def signin():
     try:
         if request.method == "POST":
@@ -104,6 +108,7 @@ def signin():
 
 # registering the user
 @app.route('/register', methods = ["POST"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def register():
     try:
         _username = request.form["username"]
@@ -139,6 +144,7 @@ def register():
 
 # return chat ID
 @app.route('/get_chatid', methods = ["GET"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def redirect_to_chat():
     if "chatID" in session and session["chatID"] != None:
         chatID = session["chatID"]
@@ -148,6 +154,7 @@ def redirect_to_chat():
 
 #return chat history
 @app.route('/chat/log/<chatID>', methods = ["GET"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def chat_log(chatID):
     try:
         chat_ID=chat_db.child(chatID)
@@ -168,6 +175,7 @@ def chat_log(chatID):
 
 # post chat messages to DB
 @app.route('/chat/<chatID>', methods = ["POST"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def chat(chatID):
     try:
         chat_ID=chat_db.child(chatID)
@@ -196,6 +204,7 @@ def handle_message(msg):
     send(msg,broadcast=True)
 
 @app.route('/matchmaking', methods = ["POST"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def matchmaking():
     avail_user = match_db.get()
     waiting_already = False
@@ -254,6 +263,7 @@ def matchmaking():
     return Response(str(dict(session)), status=200, mimetype='application/json')
 
 @app.route('/get_profile', methods = ["GET"])
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def get_profile():
     try:
         if session.get("user"):
@@ -270,6 +280,7 @@ def get_profile():
         return Response("{'error':'{}'}".format(str(e)), status=500, mimetype='application/json')
 
 @app.route('/bot_casual',methods=["GET"]) 
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def bot_casual(): 
     try: 
         session['random-number']+=1
@@ -279,6 +290,7 @@ def bot_casual():
         return Response("{'error':'{}'}".format(str(e)),status=500, mimetype='application/json')
 
 @app.route('/bot_immigration',methods=["GET"]) 
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def bot_immigration(): 
     try: 
         session['random-number']+=1
@@ -288,6 +300,7 @@ def bot_immigration():
         return Response("{'error':'{}'}".format(str(e)),status=500, mimetype='application/json')
 
 @app.route('/bot_economics',methods=["GET"]) 
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def bot_economics():  
     try:
         session['random-number']+=1
@@ -298,6 +311,7 @@ def bot_economics():
 
 
 @app.route('/bot_healthcare',methods=["GET"]) 
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def bot_healthcare():  
     try:
         session['random-number']+=1
@@ -307,6 +321,7 @@ def bot_healthcare():
         return Response("{'error':'{}'}".format(str(e)),status=500, mimetype='application/json')
 
 @app.route('/bot_education',methods=["GET"]) 
+@cross_origin(origin='127.0.0.1',headers=['Content- Type','Authorization'])
 def bot_education():  
     try:
         session['random-number']+=1
@@ -314,5 +329,6 @@ def bot_education():
     except Exception as e: 
         print(e)
         return Response("{'error':'{}'}".format(str(e)),status=500, mimetype='application/json')
+        
 if __name__ == "__main__":
     socketio.run(app)
