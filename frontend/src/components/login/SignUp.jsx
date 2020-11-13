@@ -16,10 +16,15 @@ const SignUp = () => {
   const [error, setError] = useState({});
 
   const onFinish = (values) => {
+    console.log(values);
     Axios.post('http://localhost:5000/register',
       {
         headers: { 'Access-Control-Allow-Origin': '*' },
-        values,
+        data: {
+          email: values.email,
+          password: values.password,
+          // party: values.
+        },
       })
       .then((res) => {
         if (res.error) {

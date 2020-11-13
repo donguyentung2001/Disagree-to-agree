@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Form, Input, Button,
 } from 'antd';
 import './index.scss';
+import Axios from 'axios';
 
 const layout = {
   labelCol: {
@@ -16,6 +17,8 @@ const layout = {
 };
 
 const Profile = () => {
+  const [user, setUser] = useState();
+
   const onFinish = (values) => {
     console.log('Success:', values);
   };
@@ -23,6 +26,19 @@ const Profile = () => {
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
+
+  useEffect(() => {
+    Axios.get('http://localhost:5000/get_profile',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      })
+      .then((res) => {
+        const { users } = res.data;
+        setUser(users[0]);
+      }).catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <div id="profile-body">
@@ -32,17 +48,6 @@ const Profile = () => {
         layout="vertical"
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
-        initialValues={{
-          username: 'linh',
-          email: 'a@gmail.com',
-          password: '123',
-          interest: '',
-          healthcare: 'a',
-          income: 'a',
-          immigrant: 'a',
-          tax: 'a',
-          education: 'a',
-        }}
       >
         <div className="d-fl">
           <Form.Item
@@ -50,7 +55,7 @@ const Profile = () => {
             label="Username"
             name="username"
           >
-            <Input disabled />
+            <Input placeholder={user && user.username} disabled />
           </Form.Item>
 
           <Form.Item
@@ -58,7 +63,7 @@ const Profile = () => {
             label="Email"
             name="email"
           >
-            <Input disabled />
+            <Input placeholder={user && user.email} disabled />
           </Form.Item>
         </div>
 
@@ -66,7 +71,7 @@ const Profile = () => {
           label="Password"
           name="password"
         >
-          <Input.Password />
+          <Input.Password value={user && user.password} />
         </Form.Item>
         <Form.Item
           name="identity"
@@ -78,37 +83,37 @@ const Profile = () => {
           name="interest"
           label="Interest"
         >
-          <Input disabled />
+          <Input placeholder={user && user.interest} disabled />
         </Form.Item>
         <Form.Item
           name="healthcare"
           label="What do you think about universal healthcare?"
         >
-          <Input.TextArea disabled />
+          <Input.TextArea placeholder={user && user.messages[0]} disabled />
         </Form.Item>
         <Form.Item
           name="income"
           label="What do you think about universal basic income?"
         >
-          <Input.TextArea disabled />
+          <Input.TextArea placeholder={user && user.messages[1]} disabled />
         </Form.Item>
         <Form.Item
           name="immigrant"
           label="What do you think about allowing more immigrants into the US?"
         >
-          <Input.TextArea disabled />
+          <Input.TextArea placeholder={user && user.messages[2]} disabled />
         </Form.Item>
         <Form.Item
           name="tax"
           label="What do you think about making the rich pay more for taxes?"
         >
-          <Input.TextArea disabled />
+          <Input.TextArea placeholder={user && user.messages[3]} disabled />
         </Form.Item>
         <Form.Item
           name="education"
           label="Should education be free?"
         >
-          <Input.TextArea disabled />
+          <Input.TextArea placeholder={user && user.messages[4]} disabled />
         </Form.Item>
 
         <Form.Item>

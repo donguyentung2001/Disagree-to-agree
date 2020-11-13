@@ -5,7 +5,11 @@ import { Link } from 'react-router-dom';
 import './index.scss';
 
 const Matching = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // useEffect(() => {
+
+  // })
 
   return (
     <div id="matching">
