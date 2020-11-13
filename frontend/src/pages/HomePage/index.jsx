@@ -2,7 +2,7 @@ import { Button } from 'antd';
 import Axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
-  Link, useHistory, useLocation, withRouter,
+  Link, useHistory, useLocation,
 } from 'react-router-dom';
 import API from '../../utils/api';
 import './index.scss';
@@ -41,4 +41,4 @@ const HomePage = () => {
   );
 };
 
-export default withRouter(HomePage);
+export default HomePage;
