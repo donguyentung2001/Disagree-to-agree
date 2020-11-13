@@ -8,14 +8,14 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 var username = '{{ user }}'
-                var socket = io.connect('http://127.0.0.1:5000');
+                var socket = io.connect('yhack-295013.ue.r.appspot.com');
                 var chatID = '{{chatID}}';
     
                 socket.on('message', function(msg) {
                     if (msg=="!exit") {
                         $.ajax({
                             type : "POST",
-                            url : "http://127.0.0.1:5000/chat/" + chatID,
+                            url : "http://yhack-295013.ue.r.appspot.com/chat/" + chatID,
                             data: JSON.stringify({"msg": "!exit"}),
                             dataType:"json",
                             contentType: 'application/json;charset=UTF-8',
@@ -33,7 +33,7 @@
                     }
                     );
                     $.ajax({
-                    url: 'http://127.0.0.1:5000/chat/log/' + chatID,
+                    url: 'http://yhack-295013.ue.r.appspot.com/chat/log/' + chatID,
                     type: 'GET',
                     success: function(data) {
                         var spaced_data = data.replace(/\n/g, '<br/>');
@@ -56,7 +56,7 @@
                     
                     $.ajax({
                             type : "POST",
-                            url : "http://127.0.0.1:5000/chat/" + chatID,
+                            url : "http://yhack-295013.ue.r.appspot.com/chat/" + chatID,
                             data: JSON.stringify({"msg": message}),
                             dataType:"json",
                             contentType: 'application/json;charset=UTF-8',
