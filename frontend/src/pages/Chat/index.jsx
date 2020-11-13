@@ -1,5 +1,3 @@
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable no-unused-vars */
 import { SendOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 import Axios from 'axios';

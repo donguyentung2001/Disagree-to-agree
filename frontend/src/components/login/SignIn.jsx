@@ -34,7 +34,6 @@ const SignIn = () => {
         } else if (data.status_code === 500) {
           notification.openNotification('Server Error', 'Cannot Sign In');
         } else {
-          console.log(data);
           localStorage.setItem('user', JSON.stringify(data));
           history.push('/');
         }
