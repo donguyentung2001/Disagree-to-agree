@@ -1,5 +1,4 @@
 import { Button } from 'antd';
-import Axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
   Link, useHistory, useLocation,
@@ -8,23 +7,14 @@ import API from '../../utils/api';
 import './index.scss';
 
 const HomePage = () => {
-  // eslint-disable-next-line no-unused-vars
   const [name, setName] = useState('Linh');
   const history = useHistory();
   const { pathname } = useLocation();
 
   useEffect(() => {
     API.checkLoggedIn(history, pathname);
-    Axios.get('http://localhost:5000/get_profile',
-      {
-        headers: { 'Access-Control-Allow-Origin': '*' },
-      })
-      .then((res) => {
-        const { data } = res;
-        setName(data.username);
-      })
-      .catch((error) => console.log(error));
-  });
+    setName(JSON.parse(localStorage.getItem('user')).user);
+  }, []);
 
   return (
     <div id="homepage-body">
