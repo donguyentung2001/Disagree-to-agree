@@ -8,7 +8,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 var username = '{{ user }}'
-                var socket = io.connect('yhack-295013.ue.r.appspot.com');
+                var socket = io.connect(window.location.host);
                 var chatID = '{{chatID}}';
     
                 socket.on('message', function(msg) {
@@ -16,7 +16,7 @@
                     if (msg=="!exit") {
                         $.ajax({
                             type : "POST",
-                            url : "http://yhack-295013.ue.r.appspot.com/chat/" + chatID,
+                            url : window.location.origin + "/chat/" + chatID,
                             data: JSON.stringify({"msg": "!exit"}),
                             dataType:"json",
                             contentType: 'application/json;charset=UTF-8',
@@ -35,7 +35,7 @@
                     reduced_msg == "!education") { 
                         if (reduced_msg == "!immigration") { 
                             $.ajax({
-                            url: 'http://127.0.0.1:5000/bot_immigration',
+                            url: window.location.origin + '/bot_immigration',
                             type: 'GET',
                             success: function(bot_question) {
                                 var complete_question = "Chatbot: " + bot_question
@@ -48,7 +48,7 @@
                         }
                         if (reduced_msg == "!casual") { 
                             $.ajax({
-                            url: 'http://127.0.0.1:5000/bot_casual',
+                            url: window.location.origin + '/bot_casual',
                             type: 'GET',
                             success: function(bot_question) {
                                 var complete_question = "Chatbot: " + bot_question
@@ -61,7 +61,7 @@
                         }
                         if (reduced_msg == "!economics") { 
                             $.ajax({
-                            url: 'http://127.0.0.1:5000/bot_economics',
+                            url: window.location.origin + '/bot_economics',
                             type: 'GET',
                             success: function(bot_question) {
                                 var complete_question = "Chatbot: " + bot_question
@@ -74,7 +74,7 @@
                         }
                         if (reduced_msg == "!healthcare") { 
                             $.ajax({
-                            url: 'http://127.0.0.1:5000/bot_healthcare',
+                            url: window.location.origin + '/bot_healthcare',
                             type: 'GET',
                             success: function(bot_question) {
                                 var complete_question = "Chatbot: " + bot_question
@@ -87,7 +87,7 @@
                         }
                         if (reduced_msg == "!education") { 
                             $.ajax({
-                            url: 'http://127.0.0.1:5000/bot_education',
+                            url: window.location.origin + '/bot_education',
                             type: 'GET',
                             success: function(bot_question) {
                                 var complete_question = "Chatbot: " + bot_question
@@ -102,7 +102,7 @@
                     }
                     );
                     $.ajax({
-                    url: 'http://yhack-295013.ue.r.appspot.com/chat/log/' + chatID,
+                    url: window.location.origin + '/chat/log/' + chatID,
                     type: 'GET',
                     success: function(data) {
                         var spaced_data = data.replace(/\n/g, '<br/>');
@@ -125,7 +125,7 @@
                     
                     $.ajax({
                             type : "POST",
-                            url : "http://yhack-295013.ue.r.appspot.com/chat/" + chatID,
+                            url : window.location.origin + "/chat/" + chatID,
                             data: JSON.stringify({"msg": message}),
                             dataType:"json",
                             contentType: 'application/json;charset=UTF-8',
@@ -144,7 +144,7 @@
                         
                         $.ajax({
                                 type : "POST",
-                                url : "http://127.0.0.1:5000/chat/" + chatID,
+                                url : window.location.origin + "/chat/" + chatID,
                                 data: JSON.stringify({"msg": message}),
                                 dataType:"json",
                                 contentType: 'application/json;charset=UTF-8',
