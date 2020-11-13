@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unused-vars */
-import { Button } from 'antd';
+import { SendOutlined } from '@ant-design/icons';
+import { Button, Input } from 'antd';
 import Axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation, Link } from 'react-router-dom';
@@ -65,9 +66,14 @@ const Chat = () => {
           <Button type="danger" size="large">Leave</Button>
         </Link>
       </div>
-      <div style={{ height: '350px', overflow: 'auto' }}>
+      <div style={{ height: '370px', overflow: 'auto', border: '1px solid #000' }}>
         {chat.map((item, i) => <ChatItem user={item.user} message={item.message} key={`chat-${i}`} />)}
       </div>
+      <Input
+        suffix={(
+          <SendOutlined />
+      )}
+      />
     </div>
   );
 };
