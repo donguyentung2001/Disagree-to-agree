@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, R
 from flask.wrappers import Response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import SocketIO, send
-from flask.ext.cors import CORS, cross_origin
+from flask_cors import CORS, cross_origin
 
 # database
 import firebase_admin
