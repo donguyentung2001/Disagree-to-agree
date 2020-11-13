@@ -254,4 +254,4 @@ def bot_education():
     return bot_questions.education[session['random-number']%(len(bot_questions.education)-1)]
 
 if __name__ == "__main__":
-    socketio.run(app)
+    socketio.run(app, port=5000, host='0.0.0.0', debug=True)
