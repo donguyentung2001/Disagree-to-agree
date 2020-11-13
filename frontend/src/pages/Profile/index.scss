@@ -1,0 +1,33 @@
+@import "src/styles/_base";
+@import "src/styles/_mixins";
+
+#profile-body {
+  padding-left: 10px;
+  padding-right: 10px;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.d-fl {
+  justify-content: space-between;
+}
+
+.d-fl .ant-row {
+  width: 47%;
+  flex-shrink: 0;
+}
+
+.ant-form-item-label {
+  font-weight: 500 !important;
+  font-size: $heading-size !important;
+}
+
+.ant-input-affix-wrapper:hover {
+  border-color: $black;
+}
+
+.ant-input-password > .ant-input:hover,
+.ant-input-password > .ant-input:focus  {
+  box-shadow: none !important;
+}

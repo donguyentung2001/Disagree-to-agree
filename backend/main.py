@@ -17,6 +17,7 @@ import random
 import time
 from profile_analysis import sentiment_analysis
 from matching import matching_algo
+import bot_questions as bot_questions 
 
 #app setup
 app = Flask(__name__)
@@ -109,12 +110,18 @@ def matchmaking():
 def redirect_to_chat():
     if "chatID" in session and session["chatID"] != None:
         chatID = session["chatID"]
+        session['random-number']=len(chatID)
         return redirect("/chat/" + str(chatID))
     else:
         return redirect("/matchmaking")
 
 @app.route('/chat/<chatID>', methods = ["GET", "POST"])
 def chat(chatID):
+    other_email=chatID.replace(session["user_email"],'')
+    other_username=users_db.order_by_child('email').equal_to(other_email).get().items()
+    for _, user in other_username:
+        otherusername=user['username']
+
     chat_ID=chat_db.child(chatID)
     if request.method == "POST":
         if request.json['msg'] == "!exit":
@@ -132,7 +139,7 @@ def chat(chatID):
         if str(chatID) != session["chatID"]:
             return "You do not have permission. Please return"
         else:
-            return render_template("chat.html",user=session['user'], chatID = chatID)
+            return render_template("chat.html",user=session['user'], chatID = chatID, otherusername=otherusername)
 
 @app.route('/chat/log/<chatID>', methods = ["GET", "POST"])
 def chat_log(chatID): 
@@ -220,6 +227,31 @@ def logout():
     if 'credentials' in session:
         del session['credentials']
     return redirect('/')
+
+@app.route('/bot_casual',methods=["GET"]) 
+def bot_casual(): 
+    session['random-number']+=1
+    return bot_questions.casual[session['random-number']%(len(bot_questions.casual)-1)]
+
+@app.route('/bot_immigration',methods=["GET"]) 
+def bot_immigration(): 
+    session['random-number']+=1
+    return bot_questions.immigration[session['random-number']%(len(bot_questions.immigration)-1)]
+
+@app.route('/bot_economics',methods=["GET"]) 
+def bot_economics():  
+    session['random-number']+=1
+    return bot_questions.economics[session['random-number']%(len(bot_questions.economics)-1)]
+
+@app.route('/bot_healthcare',methods=["GET"]) 
+def bot_healthcare():  
+    session['random-number']+=1
+    return bot_questions.healthcare[session['random-number']%(len(bot_questions.healthcare)-1)]
+
+@app.route('/bot_education',methods=["GET"]) 
+def bot_education():  
+    session['random-number']+=1
+    return bot_questions.education[session['random-number']%(len(bot_questions.education)-1)]
 
 if __name__ == "__main__":
     socketio.run(app)

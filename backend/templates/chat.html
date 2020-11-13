@@ -12,6 +12,7 @@
                 var chatID = '{{chatID}}';
     
                 socket.on('message', function(msg) {
+                    reduced_msg=msg.substr(msg.indexOf(":")+2)
                     if (msg=="!exit") {
                         $.ajax({
                             type : "POST",
@@ -26,8 +27,76 @@
                         setTimeout(function(){window.location.href = '/'}, 1000)
                     }
                     else {
-                        if (/\S/.test(msg)) {
+                        if (/\S/.test(reduced_msg)) {
                             $('#message-display').append('<div>' + msg + '<div>')
+                        }
+                    }
+                    if (reduced_msg == "!immigration" || reduced_msg == "!casual" || reduced_msg == "!economics" || reduced_msg == "!healthcare" ||
+                    reduced_msg == "!education") { 
+                        if (reduced_msg == "!immigration") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_immigration',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!casual") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_casual',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!economics") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_economics',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!healthcare") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_healthcare',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!education") { 
+                            $.ajax({
+                            url: 'http://127.0.0.1:5000/bot_education',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
                         }
                     }
                     }
@@ -66,17 +135,39 @@
                         });
                 }
                 });
+                $("#message-input").keyup(function(event){ 
+                    if (event.keyCode == '13') {
+                        var message = $('#message-input').val()
+                        socket.send(username + ": " + $('#message-input').val());
+                        $('#message-input').val('');
+                        if (/\S/.test(message)) {
+                        
+                        $.ajax({
+                                type : "POST",
+                                url : "http://127.0.0.1:5000/chat/" + chatID,
+                                data: JSON.stringify({"msg": message}),
+                                dataType:"json",
+                                contentType: 'application/json;charset=UTF-8',
+                                success: function() {
+                                    console.log("Success")
+                                }
+                            });
+                    }
+                }
+                })
                 $("#exit").on('click',function() {
                     socket.send("!exit")
                 })
                 });
     
         </script>
-        <div> Welcome to the chat room. You are chatting with a user. </div>
+        <div> Welcome to the chat room. You are chatting with {{otherusername}}. </div>
+        <div> You can type "!casual", "!immigration", "!economics", "!healthcare", "!education" to receive a random question from our chatbot on such topics.</div>
         <div id="loading"> Loading... </div>
         <div id="message-display"> </div>
         <input type="text" id="message-input" hidden>
         <button id="sendbutt" hidden> Send </button>
         <button id="exit" hidden> Exit </button>
+        <div id="chatbot"> </div>
     </body>
 </html>

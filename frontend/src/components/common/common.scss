@@ -1,0 +1,22 @@
+@import "src/styles/_base";
+@import "src/styles/_mixins";
+
+.logo {
+  width: fit-content;
+  color: $white;
+  flex-shrink: 0;
+}
+
+.ant-dropdown-link {
+  color: $white;
+}
+
+.ant-dropdown-link:hover {
+  border-bottom: none;
+}
+
+.ant-menu {
+  background: $black;
+  margin-left: auto;
+  height: 64.5px;
+}

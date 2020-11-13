@@ -12,6 +12,7 @@ import datetime
 
 # utilities
 import json
+import bot_questions as bot_questions 
 from flask.json import jsonify
 import random
 import time
@@ -264,5 +265,50 @@ def get_profile():
         print(e)
         return Response(str(e), status=500, mimetype='application/json')
 
+@app.route('/bot_casual',methods=["GET"]) 
+def bot_casual(): 
+    try: 
+        session['random-number']+=1
+        return Response("{'question':'{}'}".format(bot_questions.casual[session['random-number']%(len(bot_questions.casual)-1)]), status=200, mimetype='application/json')
+    except Exception as e: 
+        print(e)
+        return Response(str(e),status=500, mimetype='application/json')
+
+@app.route('/bot_immigration',methods=["GET"]) 
+def bot_immigration(): 
+    try: 
+        session['random-number']+=1
+        return Response("{'question':'{}'}".format(bot_questions.immigration[session['random-number']%(len(bot_questions.immigration)-1)]), status=200, mimetype='application/json')
+    except Exception as e: 
+        print(e)
+        return Response(str(e),status=500, mimetype='application/json')
+
+@app.route('/bot_economics',methods=["GET"]) 
+def bot_economics():  
+    try:
+        session['random-number']+=1
+        return Response("{'question':'{}'}".format(bot_questions.economics[session['random-number']%(len(bot_questions.economics)-1)]), status=200, mimetype='application/json')
+    except Exception as e: 
+        print(e)
+        return Response(str(e),status=500, mimetype='application/json')
+
+
+@app.route('/bot_healthcare',methods=["GET"]) 
+def bot_healthcare():  
+    try:
+        session['random-number']+=1
+        return Response("{'question':'{}'}".format(bot_questions.healthcare[session['random-number']%(len(bot_questions.healthcare)-1)]), status=200, mimetype='application/json')
+    except Exception as e: 
+        print(e)
+        return Response(str(e),status=500, mimetype='application/json')
+
+@app.route('/bot_education',methods=["GET"]) 
+def bot_education():  
+    try:
+        session['random-number']+=1
+        return Response("{'question':'{}'}".format(bot_questions.education[session['random-number']%(len(bot_questions.education)-1)]), status=200, mimetype='application/json')
+    except Exception as e: 
+        print(e)
+        return Response(str(e),status=500, mimetype='application/json')
 if __name__ == "__main__":
     socketio.run(app)
