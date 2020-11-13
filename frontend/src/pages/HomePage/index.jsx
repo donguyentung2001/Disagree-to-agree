@@ -13,7 +13,7 @@ const HomePage = () => {
 
   useEffect(() => {
     API.checkLoggedIn(history, pathname);
-    setName(JSON.parse(localStorage.getItem('user')).user);
+    setName(JSON.parse(localStorage.getItem('user')) && JSON.parse(localStorage.getItem('user')).user);
   }, []);
 
   return (

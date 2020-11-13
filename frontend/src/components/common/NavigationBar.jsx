@@ -26,7 +26,8 @@ const NavigationBar = () => {
         headers: { 'Access-Control-Allow-Origin': '*' },
       })
       .then((res) => {
-        if (res.body !== 'Success') {
+        const { data } = res;
+        if (data.status_code !== 200) {
           notification.openNotification('Error!', 'Cannot logout.');
         }
       }).catch((err) => {
@@ -61,7 +62,7 @@ const NavigationBar = () => {
               onClick={(e) => e.preventDefault()}
             >
               <UserOutlined color="#fff" />
-              <span>Linh</span>
+              <span>{JSON.parse(localStorage.getItem('user')) && JSON.parse(localStorage.getItem('user')).user}</span>
               {' '}
               <DownOutlined />
             </div>

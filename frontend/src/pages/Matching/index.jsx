@@ -1,15 +1,30 @@
 /* eslint-disable no-unused-vars */
 import { Button } from 'antd';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+import api from '../../utils/api';
 import './index.scss';
 
 const Matching = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const history = useHistory();
+  const { pathname } = useLocation();
 
-  // useEffect(() => {
-
-  // })
+  useEffect(() => {
+    api.checkLoggedIn(history, pathname);
+    Axios.post('http://localhost:5000/matchmaking',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      })
+      .then((res) => {
+        const { data } = res;
+        console.log(data);
+        setIsLoading(false);
+      }).catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <div id="matching">
