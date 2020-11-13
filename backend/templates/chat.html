@@ -6,13 +6,35 @@
     </head>
     <body>
         <script type="text/javascript">
+            
             $(document).ready(function() {
                 var username = '{{ user }}'
-                var socket = io.connect(window.location.host);
+                // var socket = io.connect(window.location.host);
                 var chatID = '{{chatID}}';
-    
-                socket.on('message', function(msg) {
+                var scheme = window.location.protocol == "https:" ? 'wss://' : 'ws://';
+                var webSocketUri =  scheme
+                                + window.location.hostname
+                                + (location.port ? ':'+location.port: '')
+                                + '/chat/' + chatID;
+                /* Establish the WebSocket connection and register event handlers. */
+                var websocket = new WebSocket(webSocketUri);
+
+                websocket.onopen = function(e) {
+                    // websocket.send("WebSocket rocks");
+                    console.log('Connected');
+                    // console.log("self.socket event.type:", e.type);
+                };
+
+                websocket.onclose = function() {
+                    console.log('Closed');
+                    // console.log("self.socket event.type:", e.type);
+                };
+
+                websocket.onmessage = function(e) {
+                    var msg = e.data
+                    console.log('Message received');
                     reduced_msg=msg.substr(msg.indexOf(":")+2)
+                    console.log(reduced_msg)
                     if (msg=="!exit") {
                         $.ajax({
                             type : "POST",
@@ -100,7 +122,7 @@
                         }
                     }
                     }
-                    );
+                    
                     $.ajax({
                     url: window.location.origin + '/chat/log/' + chatID,
                     type: 'GET',
@@ -117,9 +139,17 @@
                     }
                     });
     
+
+
+                websocket.onerror = function(e) {
+                    console.log('Error (see console)');
+                    console.log(e);
+                };
+                
+                
                 $('#sendbutt').on('click', function() {
                     var message = $('#message-input').val()
-                    socket.send(username + ": " + $('#message-input').val());
+                    websocket.send(username + ": " + $('#message-input').val());
                     $('#message-input').val('');
                     if (/\S/.test(message)) {
                     
@@ -138,7 +168,7 @@
                 $("#message-input").keyup(function(event){ 
                     if (event.keyCode == '13') {
                         var message = $('#message-input').val()
-                        socket.send(username + ": " + $('#message-input').val());
+                        websocket.send(username + ": " + $('#message-input').val());
                         $('#message-input').val('');
                         if (/\S/.test(message)) {
                         
@@ -156,9 +186,9 @@
                 }
                 })
                 $("#exit").on('click',function() {
-                    socket.send("!exit")
+                    websocket.send("!exit")
                 })
-                });
+            });
     
         </script>
         <div> Welcome to the chat room. You are chatting with {{otherusername}}. </div>

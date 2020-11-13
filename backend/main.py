@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask.wrappers import Response
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_socketio import SocketIO, send
+from lib.flask_sockets import Sockets
 
 # database
 import firebase_admin
@@ -36,7 +36,7 @@ chat_db = db.child('chat')
 match_db = db.child("matchmaking")
 
 # chat (socket.io) setup
-socketio=SocketIO(app)
+sockets = Sockets(app)
 
 @app.route('/', methods = ["GET", "POST"])
 def homepage():
@@ -155,9 +155,45 @@ def chat_log(chatID):
             message+= "\n" 
     return message
 
-@socketio.on('message')
-def handle_message(msg): 
-    send(msg,broadcast=True)
+@sockets.route('/chat')
+def chat_socket(ws):
+    while not ws.closed:
+        message = ws.receive()
+        if message is None:  # message is "None" if the client has closed.
+            continue
+        
+        clients = ws.handler.server.clients.values()
+        print(clients)
+        for client in clients:
+            client.ws.send(message)
+
+@sockets.route('/chat/bernietrump')
+def chat_socket(ws):
+    while not ws.closed:
+        message = ws.receive()
+        if message is None:  # message is "None" if the client has closed.
+            continue
+        
+        clients = ws.handler.server.clients.values()
+        print(clients)
+        for client in clients:
+            client.ws.send(message)
+
+@sockets.route('/chat/trumpbernie')
+def chat_socket(ws):
+    while not ws.closed:
+        message = ws.receive()
+        if message is None:  # message is "None" if the client has closed.
+            continue
+        
+        clients = ws.handler.server.clients.values()
+        print(clients)
+        for client in clients:
+            client.ws.send(message)
+
+# @socketio.on('message')
+# def handle_message(msg): 
+#     send(msg,broadcast=True)
 
 @app.route('/register', methods = ["GET", "POST"])
 def register():
@@ -253,5 +289,5 @@ def bot_education():
     session['random-number']+=1
     return bot_questions.education[session['random-number']%(len(bot_questions.education)-1)]
 
-if __name__ == "__main__":
-    socketio.run(app)
+# if __name__ == "__main__":
+    # socketio.run(app)

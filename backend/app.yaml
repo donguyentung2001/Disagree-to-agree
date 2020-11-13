@@ -1,4 +1,4 @@
-entrypoint: "gunicorn --worker-class eventlet -w 1 -b:$PORT main:app"
+entrypoint: "gunicorn -k flask_sockets.worker -b:$PORT main:app"
 env: flex
 runtime: python
 runtime_config:

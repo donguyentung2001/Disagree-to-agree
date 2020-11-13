@@ -1,4 +1,4 @@
-﻿CacheControl==0.12.6
+CacheControl==0.12.6
 cachetools==4.1.1
 certifi==2020.6.20
 cffi==1.14.3
@@ -6,6 +6,7 @@ click==7.1.2
 eventlet==0.29.1
 firebase-admin==4.4.0
 Flask==1.1.2
+Flask-Sockets
 Flask-SocketIO==4.3.1
 gcloud==0.17.0
 google-api-core==1.23.0

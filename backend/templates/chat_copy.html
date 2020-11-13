@@ -1,0 +1,175 @@
+<html>
+    <head>
+        <title> Chat room </title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var username = '{{ user }}'
+                var socket = io.connect(window.location.host);
+                var chatID = '{{chatID}}';
+                console.log('hit')
+                console.log(window.location.host)
+                socket.on('message', function(msg) {
+                    reduced_msg=msg.substr(msg.indexOf(":")+2)
+                    console.log(reduced_msg)
+                    if (msg=="!exit") {
+                        $.ajax({
+                            type : "POST",
+                            url : window.location.origin + "/chat/" + chatID,
+                            data: JSON.stringify({"msg": "!exit"}),
+                            dataType:"json",
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function() {
+                                console.log("Success")
+                            }
+                        });
+                        setTimeout(function(){window.location.href = '/'}, 1000)
+                    }
+                    else {
+                        if (/\S/.test(reduced_msg)) {
+                            $('#message-display').append('<div>' + msg + '<div>')
+                        }
+                    }
+                    if (reduced_msg == "!immigration" || reduced_msg == "!casual" || reduced_msg == "!economics" || reduced_msg == "!healthcare" ||
+                    reduced_msg == "!education") { 
+                        if (reduced_msg == "!immigration") { 
+                            $.ajax({
+                            url: window.location.origin + '/bot_immigration',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!casual") { 
+                            $.ajax({
+                            url: window.location.origin + '/bot_casual',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!economics") { 
+                            $.ajax({
+                            url: window.location.origin + '/bot_economics',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!healthcare") { 
+                            $.ajax({
+                            url: window.location.origin + '/bot_healthcare',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                        if (reduced_msg == "!education") { 
+                            $.ajax({
+                            url: window.location.origin + '/bot_education',
+                            type: 'GET',
+                            success: function(bot_question) {
+                                var complete_question = "Chatbot: " + bot_question
+                                $('#chatbot').html(complete_question)
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                alert("cannot use chatbot")
+                            }
+                            });
+                        }
+                    }
+                    }
+                    );
+                    $.ajax({
+                    url: window.location.origin + '/chat/log/' + chatID,
+                    type: 'GET',
+                    success: function(data) {
+                        var spaced_data = data.replace(/\n/g, '<br/>');
+                        $('#message-display').append(spaced_data);
+                        $('#message-input').toggle();
+                        $('#sendbutt').toggle();
+                        $('#loading').toggle();
+                        $("#exit").toggle();
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("something went wrong")
+                    }
+                    });
+    
+                $('#sendbutt').on('click', function() {
+                    var message = $('#message-input').val()
+                    socket.send(username + ": " + $('#message-input').val());
+                    $('#message-input').val('');
+                    if (/\S/.test(message)) {
+                    
+                    $.ajax({
+                            type : "POST",
+                            url : window.location.origin + "/chat/" + chatID,
+                            data: JSON.stringify({"msg": message}),
+                            dataType:"json",
+                            contentType: 'application/json;charset=UTF-8',
+                            success: function() {
+                                console.log("Success")
+                            }
+                        });
+                }
+                });
+                $("#message-input").keyup(function(event){ 
+                    if (event.keyCode == '13') {
+                        var message = $('#message-input').val()
+                        socket.send(username + ": " + $('#message-input').val());
+                        $('#message-input').val('');
+                        if (/\S/.test(message)) {
+                        
+                        $.ajax({
+                                type : "POST",
+                                url : window.location.origin + "/chat/" + chatID,
+                                data: JSON.stringify({"msg": message}),
+                                dataType:"json",
+                                contentType: 'application/json;charset=UTF-8',
+                                success: function() {
+                                    console.log("Success")
+                                }
+                            });
+                    }
+                }
+                })
+                $("#exit").on('click',function() {
+                    socket.send("!exit")
+                })
+                });
+    
+        </script>
+        <div> Welcome to the chat room. You are chatting with {{otherusername}}. </div>
+        <div> You can type "!casual", "!immigration", "!economics", "!healthcare", "!education" to receive a random question from our chatbot on such topics.</div>
+        <div id="loading"> Loading... </div>
+        <div id="message-display"> </div>
+        <input type="text" id="message-input" hidden>
+        <button id="sendbutt" hidden> Send </button>
+        <button id="exit" hidden> Exit </button>
+        <div id="chatbot"> </div>
+    </body>
+</html>
