@@ -2,7 +2,7 @@ import {
   Radio, Form, Input, Button,
 } from 'antd';
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Axios from 'axios';
 // import api from '../../utils/api';
 
@@ -38,6 +38,7 @@ const Questionaire = () => {
       })
       .then((res) => {
         const { data } = res;
+        console.log(data);
         localStorage.setItem('user', JSON.stringify(data));
         history.push('/');
       }).catch((err) => {
@@ -105,15 +106,13 @@ const Questionaire = () => {
         </Form.Item>
         <Form.Item wrapperCol={{ span: 24 }}>
           <div className="encourage-message">Yay, you finished it!</div>
-          <Link to="/">
-            <Button
-              size="large"
-              htmlType="submit"
-              className="black-box"
-            >
-              Submit
-            </Button>
-          </Link>
+          <Button
+            size="large"
+            htmlType="submit"
+            className="black-box"
+          >
+            Submit
+          </Button>
         </Form.Item>
       </Form>
     </div>
