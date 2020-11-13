@@ -11,9 +11,10 @@ export default {
         if (data.logged_in) {
           localStorage.setItem('user', JSON.stringify(data));
           if (['/signin', '/signup'].includes(pathname)) history.push('/');
+        } else {
+          localStorage.setItem('user', JSON.stringify({}));
+          if (!(['/signin', '/signup'].includes(pathname))) history.push('/signin');
         }
-        localStorage.setItem('user', JSON.stringify({}));
-        if (!(['/signin', '/signup'].includes(pathname))) history.push('/signin');
       })
       .catch((error) => console.log(error));
   },

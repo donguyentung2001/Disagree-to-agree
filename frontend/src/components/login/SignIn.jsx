@@ -1,34 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Form, Input, Button,
 } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import Axios from 'axios';
+import { LockOutlined, MailOutlined } from '@ant-design/icons';
+import axios from 'axios';
 import { useHistory, useLocation } from 'react-router-dom';
 import API from '../../utils/api';
+import notification from '../../utils/notification';
 
 const SignIn = () => {
-  // const [error, setError] = useState({});
+  // eslint-disable-next-line no-unused-vars
+  const [emailError, setEmailError] = useState('');
+  const [passError, setPassError] = useState('');
   const history = useHistory();
   const { pathname } = useLocation();
 
   const onFinish = (values) => {
     API.checkLoggedIn(history, pathname);
-    Axios.post('http://localhost:5000/login',
+    axios.post('http://localhost:5000/login',
       {
         headers: { 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({
-          email: values.username,
+        data: {
+          email: values.email,
           password: values.password,
-        }),
+        },
       })
       .then((res) => {
-        history.push('/');
-        if (res.error) {
-          // setError(res.error);
+        const { data } = res;
+        if (data.status_code === 404) {
+          setEmailError(data.error);
+        } else if (data.status_code === 401) {
+          setPassError(data.error);
+        } else if (data.status_code === 500) {
+          notification.openNotification('Server Error', 'Cannot Sign In');
+        } else {
+          localStorage.setItem('user', data);
+          history.push('/');
         }
       }).catch((err) => {
-        history.push('/');
         console.log(err);
       });
   };
@@ -43,24 +52,46 @@ const SignIn = () => {
         onFinish={onFinish}
       >
         <Form.Item
-          name="username"
+          name="email"
           rules={
-            [{
-              required: true,
-              message: 'Please input your username!',
-            },
+            [
+              // {
+              //   type: 'email',
+              //   message: 'The input is not valid email!',
+              // }, {
+              {
+                required: true,
+                message: 'Please input your email!',
+              },
+              () => ({
+                validator() {
+                  if (emailError) return Promise.reject(emailError);
+                  return Promise.resolve();
+                },
+              }),
             ]
           }
         >
           <Input
             size="large"
-            prefix={<UserOutlined />}
-            placeholder="Username"
+            prefix={<MailOutlined />}
+            placeholder="Email"
           />
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]}
+          rules={
+            [{
+              required: true,
+              message: 'Please input your password!',
+            },
+            () => ({
+              validator() {
+                if (passError) return Promise.reject(passError);
+                return Promise.resolve();
+              },
+            })]
+}
         >
           <Input
             size="large"

@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
-import { Dropdown, Menu, notification } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { Header } from 'antd/lib/layout/layout';
 import Axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import notification from '../../utils/notification';
 import './common.scss';
 
 const NavigationBar = () => {
@@ -19,14 +20,6 @@ const NavigationBar = () => {
     setVisible(true);
   };
 
-  const openNotification = () => {
-    notification.open({
-      message: 'Notification Title',
-      description:
-        'Cannot logout.',
-    });
-  };
-
   const logout = () => {
     Axios.post('http://localhost:5000/logout',
       {
@@ -34,7 +27,7 @@ const NavigationBar = () => {
       })
       .then((res) => {
         if (res.body !== 'Success') {
-          openNotification();
+          notification.openNotification('Error!', 'Cannot logout.');
         }
       }).catch((err) => {
         console.log(err);

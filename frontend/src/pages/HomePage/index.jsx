@@ -1,4 +1,5 @@
 import { Button } from 'antd';
+import Axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
   Link, useHistory, useLocation, withRouter,
@@ -14,6 +15,15 @@ const HomePage = () => {
 
   useEffect(() => {
     API.checkLoggedIn(history, pathname);
+    Axios.get('http://localhost:5000/get_profile',
+      {
+        headers: { 'Access-Control-Allow-Origin': '*' },
+      })
+      .then((res) => {
+        const { data } = res;
+        setName(data.username);
+      })
+      .catch((error) => console.log(error));
   });
 
   return (
