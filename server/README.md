@@ -1,6 +1,9 @@
 # Disagree-to-agree
 A YHacks project, made by Tung Do, Samuel Tan, Linh Ta, Trung Nguyen
 
+### Video demo of this project
+https://devpost.com/software/disagree-to-agree-mcu4jv
+
 To run the program:
 
 ### Step 1: Create a new environment
@@ -29,5 +32,3 @@ OR (recommended):
 flask run
 ```
 
-### Video demo of this project
-https://devpost.com/software/disagree-to-agree-mcu4jv
